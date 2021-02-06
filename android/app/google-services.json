@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "120098009528",
+    "project_id": "am-sliit",
+    "storage_bucket": "am-sliit.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:120098009528:android:db7f51226ce7c7bbf99f4d",
+        "android_client_info": {
+          "package_name": "com.evoxsolutions.am_sliit"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "120098009528-4kk5i395gbp9vjks2mtoihnam51kimc5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD9BHQvbCny5y_pTSvyZjS6M2wvCOvFhzI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "120098009528-4kk5i395gbp9vjks2mtoihnam51kimc5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
