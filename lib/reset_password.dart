@@ -4,9 +4,6 @@ import 'dart:ffi';
 
 import 'package:am_sliit/register.dart';
 import 'package:am_sliit/reset_password.dart';
-import 'package:am_sliit/verify_email_to_continue.dart';
-import 'package:am_sliit/welcome.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -33,19 +30,14 @@ import 'login.dart';
 import 'package:flutter/src/widgets/framework.dart';
 
 
-
-class LoginScreen extends StatelessWidget {
-
-
-
-
+class ResetPasswordScreen extends StatelessWidget {
   final Color primaryColor = Color(0xff00007b);
   final Color secondaryColor = Colors.indigo[700];
 
   final Color logoGreen = Color(0xffD0752c);
 
+
   final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +56,7 @@ class LoginScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 Text(
-                  'Welcome to AM SLIIT',
+                  'Reset your password',
                   textAlign: TextAlign.center,
                   style:
                   GoogleFonts.openSans(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold),
@@ -75,7 +67,7 @@ class LoginScreen extends StatelessWidget {
                 Center(
                   child: Image.asset(
                     'assets/register.png',
-                    height: 150,
+                    height: 250,
                   ),
                 ),
                 SizedBox(
@@ -83,8 +75,6 @@ class LoginScreen extends StatelessWidget {
                 ),
                 _buildTextField(
                     emailController, Icons.account_circle, 'Email'),
-                SizedBox(height: 20),
-                _buildTextField(passwordController, Icons.lock, 'Password'),
                 SizedBox(height: 30),
                 MaterialButton(
                   elevation: 0,
@@ -92,50 +82,29 @@ class LoginScreen extends StatelessWidget {
                   height: 50,
                   onPressed: () {
                     if(emailController.text.isEmpty){
-                      displayToastMessage("fill the name", context);
-                    }else if(passwordController.text.isEmpty){
-                      displayToastMessage("fill the password", context);
+                      displayToastMessage("This field is mandatory", context);
+                    }else if(!emailController.text.endsWith("sliit.lk")){
+                      displayToastMessage("Please use your SLIIT email", context);
                     }else{
-                      loginUser(context);
+                      resetPassword(context);
                     }
                   },
                   color: logoGreen,
-                  child: Text('Sign In',
+                  child: Text('Proceed to reset',
                       style: TextStyle(color: Colors.white, fontSize: 16)),
                   textColor: Colors.white,
-                ),
-                SizedBox(height: 20),
-                TextButton(
-                  onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (_) => RegisterScreen()));
-                  },
-                  child: Text(
-                    "Don't Have an Account? Sign Up Now",
-                    style: TextStyle(color: Colors.white, fontSize: 16),
-                  ),
-                ),
-                TextButton(
-                  onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (_) => ResetPasswordScreen()));
-                  },
-                  child: Text(
-                    "Forgotten Password",
-                    style: TextStyle(color: Colors.white, fontSize: 16),
-                  ),
                 ),
                 SizedBox(height: 60),
                 Align(
                   alignment: Alignment.bottomCenter,
-                 // child: _buildFooterLogo(),
+                  //child: _buildFooterLogo(),
                 )
               ],
             ),
           ),
         ));
   }
-
+  //
   // _buildFooterLogo() {
   //   return Row(
   //     mainAxisAlignment: MainAxisAlignment.center,
@@ -182,31 +151,11 @@ class LoginScreen extends StatelessWidget {
   //register new user with firebase
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
-  void loginUser(BuildContext context) async {
-    try {
-      UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: emailController.text.trim(),
-          password: passwordController.text.trim(),
-      );
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        displayToastMessage("No user found for that email", context);
-      } else if (e.code == 'wrong-password') {
-        displayToastMessage("Wrong password provided for that user", context);
-      }
-    }
+  void resetPassword(BuildContext context) async {
 
-    FirebaseAuth.instance
-        .authStateChanges()
-        .listen((User user) {
-      if (user == null) {
-        print('User is currently signed out!');
-      } else {
-        displayToastMessage("User is signed in!", context);
-        Navigator.push(context,
-            MaterialPageRoute(builder: (_) => LoadWelcomePage()));
-      }
-    });
+    _firebaseAuth.sendPasswordResetEmail(email: emailController.text.trim());
+
+
 
   }
 

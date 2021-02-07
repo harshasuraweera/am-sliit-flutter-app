@@ -13,7 +13,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-
+import 'package:cool_stepper/cool_stepper.dart';
 import 'index.dart';
 import 'login.dart';
 
@@ -28,9 +28,6 @@ class RegisterScreen extends StatelessWidget {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -52,10 +49,19 @@ class RegisterScreen extends StatelessWidget {
                   'Register On Here',
                   textAlign: TextAlign.center,
                   style:
-                  GoogleFonts.openSans(color: Colors.white, fontSize: 28),
+                  GoogleFonts.openSans(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(
-                  height: 50,
+                  height: 20,
+                ),
+                Center(
+                  child: Image.asset(
+                    'assets/register.png',
+                    height: 150,
+                  ),
+                ),
+                SizedBox(
+                  height: 20,
                 ),
                 _buildTextField(
                     nameController, Icons.account_circle, 'Name'),
@@ -64,32 +70,31 @@ class RegisterScreen extends StatelessWidget {
                     emailController, Icons.account_circle, 'Email'),
                 SizedBox(height: 20),
                 _buildTextField(passwordController, Icons.lock, 'Password'),
-                SizedBox(height: 30),
-
+                SizedBox(height: 50),
                 MaterialButton(
                   elevation: 0,
                   minWidth: double.maxFinite,
                   height: 50,
                   onPressed: () {
-                    if(nameController.text.isEmpty){
-                      displayToastMessage("fill the name", context);
-                    }else if(emailController.text.isEmpty){
-                      displayToastMessage("fill the email", context);
-                    }else if(passwordController.text.isEmpty){
-                      displayToastMessage("fill the password", context);
+                    if(nameController.text.isEmpty || emailController.text.isEmpty || passwordController.text.isEmpty){
+                      displayToastMessage("All the fields are mandatory", context);
+                    }else if(!emailController.text.endsWith("sliit.lk")){
+                      displayToastMessage("Please use your SLIIT email", context);
+                    }else if(passwordController.text.length < 4){
+                      displayToastMessage("Password is too short", context);
                     }else{
                       registerNewUser(context);
                     }
                   },
-                  color: secondaryColor,
+                  color: logoGreen,
                   child: Text('Register Now',
                       style: TextStyle(color: Colors.white, fontSize: 16)),
                   textColor: Colors.white,
                 ),
-                SizedBox(height: 40),
+                SizedBox(height: 80),
                 Align(
                   alignment: Alignment.bottomCenter,
-                  child: _buildFooterLogo(),
+                 // child: _buildFooterLogo(),
                 )
               ],
             ),
@@ -97,24 +102,24 @@ class RegisterScreen extends StatelessWidget {
         ));
   }
 
-  _buildFooterLogo() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-
-        Text('App By ',
-            textAlign: TextAlign.center,
-            style: GoogleFonts.openSans(
-                color: Colors.white,
-                fontSize: 20,
-                fontWeight: FontWeight.bold)),
-        Image.asset(
-          'assets/evox_white.png',
-          height: 40,
-        ),
-      ],
-    );
-  }
+  // _buildFooterLogo() {
+  //   return Row(
+  //     mainAxisAlignment: MainAxisAlignment.center,
+  //     children: <Widget>[
+  //
+  //       Text('App By ',
+  //           textAlign: TextAlign.center,
+  //           style: GoogleFonts.openSans(
+  //               color: Colors.white,
+  //               fontSize: 20,
+  //               fontWeight: FontWeight.bold)),
+  //       Image.asset(
+  //         'assets/evox_white.png',
+  //         height: 40,
+  //       ),
+  //     ],
+  //   );
+  // }
 
   _buildTextField(
       TextEditingController controller, IconData icon, String labelText) {
@@ -159,10 +164,12 @@ class RegisterScreen extends StatelessWidget {
 
       usersRef.child(firebaseUser.uid).set(userDataMap);
 
-      displayToastMessage("äccount created", context);
+      displayToastMessage("Account created, login now", context);
 
       Navigator.push(context,
           MaterialPageRoute(builder: (_) => LoginScreen()));
+
+      FirebaseAuth.instance.signOut();
 
     }else{ //user not created
       displayToastMessage("user has not created", context);
@@ -173,18 +180,6 @@ class RegisterScreen extends StatelessWidget {
   displayToastMessage(String message, BuildContext context){
     Fluttertoast.showToast(msg: message);
   }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

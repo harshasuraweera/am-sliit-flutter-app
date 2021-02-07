@@ -1,9 +1,17 @@
+
+import 'dart:ffi';
+import 'dart:io';
 import 'package:am_sliit/login.dart';
 import 'package:am_sliit/welcome.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:webview_flutter/webview_flutter.dart';
+
+import 'main.dart';
 
 class IndexPage extends StatefulWidget{
   @override
@@ -11,70 +19,96 @@ class IndexPage extends StatefulWidget{
 }
 
 class _MyIndexPage extends State<IndexPage>{
+
+  String url = "http://courseweb.sliit.lk/my/";
+  String title = "CourseWeb";
+
+  final Color logoGreen = Color(0xffD0752c);
+  WebViewController _controller;
+
+
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         backgroundColor: Color(0xff00007b),
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            //We take the image from the assets
-            Center(
-              child: Image.asset(
-                'assets/university.png',
-                height: 250,
-              ),
+        appBar: AppBar(
+          backgroundColor: logoGreen,
+          title:  Text(title),
+          actions: [
+            IconButton(
+              icon: Icon(Icons.bookmark),
+              onPressed: (){
+              } , // => function();
             ),
-            SizedBox(
-              height: 20,
-            ),
-            //Texts and Styling of them
-            Text(
-              'You are done thanks for register',
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.white, fontSize: 28),
-            ),
-            SizedBox(height: 20),
-            Text(
-              'It is now easy to access every tool in once place and manage daily academic tasks!',
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.white, fontSize: 16),
-            ),
-            SizedBox(
-              height: 30,
-            ),
-            MaterialButton(
-              elevation: 0,
-              height: 50,
-              onPressed: () {
-                signOutNow(context);
-              },
-              color: Color(0xffD0752c),
-
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text('Log Out',
-                      style: TextStyle(color: Colors.white, fontSize: 20)),
-                  Icon(Icons.arrow_forward_ios)
-                ],
-              ),
-              textColor: Colors.white,
-            )
-            //Our MaterialButton which when pressed will take us to a new screen named as
-            //LoginScreen
           ],
         ),
+        drawer: Drawer(
+            // Populate the Drawer in the next step.
+          child: ListView(
+            // Important: Remove any padding from the ListView.
+            padding: EdgeInsets.zero,
+            children: <Widget>[
+              DrawerHeader(
+                child: Text("Hi, Good " +greeting() + "!",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      fontSize: 20,
+                    ),
+                ),
+                decoration: BoxDecoration(
+                  color: Color (0xff00007b),
+                  ),
+                ),
+              ListTile(
+                title: Text('CourseWeb'),
+                onTap: () {
+                  // Update the state of the app
+                  // ...
+                  _controller.loadUrl('http://courseweb.sliit.lk/my/');
+
+                  // Then close the drawer
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                title: Text('Student Profile'),
+                onTap: () {
+                  // Update the state of the app
+                  // ..
+                  _controller.loadUrl('https://study.sliit.lk/');
+
+                  // Then close the drawer
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          ),
+        ),
+       body: WebView(
+         initialUrl: "https://courseweb.sliit.lk/my/",
+         onWebViewCreated: (WebViewController webViewController) {
+           _controller = webViewController;
+         },
+       ),
       ),
     );
   }
 }
 
+String greeting() {
 
-
-Future<void> signOutNow (BuildContext context) async {
-  await FirebaseAuth.instance.signOut();
-  Navigator.push(context,
-      MaterialPageRoute(builder: (_) => MyWelcomePage()));
+  var hour = DateTime.now().hour;
+  if (hour < 12) {
+    return 'Morning';
+  }
+  if (hour < 17) {
+    return 'Afternoon';
+  }
+  return 'Evening';
 }
+
+
+
