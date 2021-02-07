@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:swipedetector/swipedetector.dart';
 
 class IndexPage extends StatefulWidget{
   @override
@@ -26,6 +27,8 @@ class _MyIndexPage extends State<IndexPage>{
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final Color logoGreen = Color(0xffD0752c);
   WebViewController _controller;
+
+
   
   TextEditingController _controllerBookmarkTitle = TextEditingController();
 
@@ -61,12 +64,28 @@ class _MyIndexPage extends State<IndexPage>{
     return SafeArea(
       child: Scaffold(
         backgroundColor: Color(0xff00007b),
+        bottomNavigationBar: BottomAppBar(
+          child: Row(
+            children: [
+              IconButton(icon: Icon(Icons.arrow_back_ios), onPressed: () {
+                _controller.goBack();
+              }),
+              Spacer(),
+              IconButton(icon: Icon(Icons.arrow_forward_ios), onPressed: () {
+                _controller.goForward();
+              }),
+            ],
+          ),
+        ),
+        floatingActionButton:
+        FloatingActionButton(child: Icon(Icons.grid_view), onPressed: () {}),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         appBar: AppBar(
           backgroundColor: logoGreen,
           title:  Text(title),
           actions: [
             IconButton(
-              icon: Icon(Icons.bookmark),
+              icon: Icon(Icons.push_pin_rounded),
               onPressed: () async {
                  //String url = await _controller.currentUrl();
                  //Fluttertoast.showToast( msg: url);
@@ -146,6 +165,42 @@ class _MyIndexPage extends State<IndexPage>{
             ],
           ),
         ),
+        endDrawer: Drawer(
+          // Populate the Drawer in the next step.
+          child: ListView(
+            // Important: Remove any padding from the ListView.
+            padding: EdgeInsets.zero,
+            children: <Widget>[
+              DrawerHeader(
+                child: Text("Hi, Good " +greeting() + "!",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    fontSize: 20,
+                  ),
+                ),
+                decoration: BoxDecoration(
+                  color: Color (0xff00007b),
+                ),
+              ),
+
+              ListTile(
+                title: Text('Net Exams'),
+                onTap: () {
+                  // Update the state of the app
+                  // ..
+                 loadLoggedUsersBookmarks(context);
+
+
+
+
+                  // Then close the drawer
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          ),
+        ),
        body: WebView(
          initialUrl: "https://courseweb.sliit.lk/my/",
          javascriptMode: JavascriptMode.unrestricted,
@@ -174,10 +229,41 @@ class _MyIndexPage extends State<IndexPage>{
 
 
 
+  loadLoggedUsersBookmarks(BuildContext context){
+
+    final User user = FirebaseAuth.instance.currentUser;
+    final uid = user.uid;
+    DatabaseReference bookmarkRef = FirebaseDatabase.instance.reference().child("bookmarks");
+
+
+    bookmarkRef.child(uid).once().then((DataSnapshot snapshot){
+      if(snapshot.value.isNotEmpty){
+          snapshot.value.forEach((key,values) {
+
+            Map bookmarkDetails = {
+              "bookmarkTitle": values["bookmarkTitle"],
+              "bookMarkUrl": values["bookMarkUrl"],
+            };
+            print(bookmarkDetails);
+
+            return ListView( children: <Widget>[
+              Text("Hello"),
+            ] );
+
+          });
+
+      }
+    });
+
+
+
+
+
+  }
+
+
+
 }
-
-
-
 
 
 String greeting() {
