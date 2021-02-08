@@ -3,10 +3,12 @@ import 'dart:ffi';
 import 'dart:io';
 import 'dart:math';
 import 'package:am_sliit/login.dart';
+import 'package:am_sliit/screens/contacts.dart';
 import 'package:am_sliit/welcome.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -15,22 +17,28 @@ import 'package:webview_flutter/webview_flutter.dart';
 import 'package:swipedetector/swipedetector.dart';
 
 class IndexPage extends StatefulWidget{
+
+  String url;
+  IndexPage({Key key, this.url}): super (key: key);
+
   @override
-  _MyIndexPage createState() => _MyIndexPage();
+  _MyIndexPage createState() => _MyIndexPage(url);
 }
 
 class _MyIndexPage extends State<IndexPage>{
 
-  String url = "http://courseweb.sliit.lk/";
-  String title = "CourseWeb";
+
+  String url;
+  _MyIndexPage(this.url);
+
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final Color logoGreen = Color(0xffD0752c);
   WebViewController _controller;
 
-
-  
+  DatabaseReference bookmarkRef = FirebaseDatabase.instance.reference().child("bookmarks").child(FirebaseAuth.instance.currentUser.uid);
   TextEditingController _controllerBookmarkTitle = TextEditingController();
+
 
   createAddBookmarkAlertDialog (BuildContext context, String currentUrlByUser){
     return showDialog(context: context, builder: (context){
@@ -59,6 +67,10 @@ class _MyIndexPage extends State<IndexPage>{
   }
 
 
+
+  GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
+
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -71,7 +83,17 @@ class _MyIndexPage extends State<IndexPage>{
                 _controller.goBack();
               }),
               Spacer(),
-              IconButton(icon: Icon(Icons.arrow_forward_ios), onPressed: () {
+              IconButton(icon: Icon(Icons.bus_alert), onPressed: () {
+
+
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (_) => Contacts()));
+
+
+
+
+
+              }),IconButton(icon: Icon(Icons.arrow_forward_ios), onPressed: () {
                 _controller.goForward();
               }),
             ],
@@ -82,13 +104,11 @@ class _MyIndexPage extends State<IndexPage>{
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         appBar: AppBar(
           backgroundColor: logoGreen,
-          title:  Text(title),
+          title:  Text("CourseWeb"),
           actions: [
             IconButton(
               icon: Icon(Icons.push_pin_rounded),
               onPressed: () async {
-                 //String url = await _controller.currentUrl();
-                 //Fluttertoast.showToast( msg: url);
                 createAddBookmarkAlertDialog(context, await _controller.currentUrl());
               } , // => function();
             ),
@@ -185,24 +205,25 @@ class _MyIndexPage extends State<IndexPage>{
               ),
 
               ListTile(
-                title: Text('Net Exams'),
+                title: Text('BookMark Page'),
                 onTap: () {
                   // Update the state of the app
                   // ..
-                 loadLoggedUsersBookmarks(context);
+                  //loadLoggedUsersBookmarks(context);
 
-
-
-
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (_) => Contacts()));
                   // Then close the drawer
                   Navigator.pop(context);
                 },
               ),
+              //add bmark list here
+
             ],
           ),
         ),
        body: WebView(
-         initialUrl: "https://courseweb.sliit.lk/my/",
+         initialUrl: url,
          javascriptMode: JavascriptMode.unrestricted,
          onWebViewCreated: (WebViewController webViewController) {
            _controller = webViewController;
@@ -211,6 +232,7 @@ class _MyIndexPage extends State<IndexPage>{
       ),
     );
   }
+
 
   void makeThisPageAsBookMark(BuildContext context, String bookmarkTitle, String bookMarkUrl) {
 
@@ -244,12 +266,8 @@ class _MyIndexPage extends State<IndexPage>{
               "bookmarkTitle": values["bookmarkTitle"],
               "bookMarkUrl": values["bookMarkUrl"],
             };
+
             print(bookmarkDetails);
-
-            return ListView( children: <Widget>[
-              Text("Hello"),
-            ] );
-
           });
 
       }
