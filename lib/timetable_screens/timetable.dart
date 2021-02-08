@@ -14,13 +14,21 @@ import 'edit_timetable.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 class Timetable extends StatefulWidget {
+
+  String clickedDay;
+  Timetable({Key key, this.clickedDay}): super (key: key);
+
+
   @override
-  _TimetableState createState() => _TimetableState();
+  _TimetableState createState() => _TimetableState(clickedDay);
 }
 
 class _TimetableState extends State<Timetable> {
 
 
+  String clickedDay;
+  _TimetableState(this.clickedDay);
+  
   String today = DateFormat('EEEE').format(DateTime.now());
   Query _ref;
   DatabaseReference reference =
@@ -31,13 +39,25 @@ class _TimetableState extends State<Timetable> {
     "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"
   ];
 
+
+  String _selectedDateFromRightTopMenu;
+
+
+
   @override
   void initState() {
-    // TODO: implement initState
+    String loadingDay;
+
+    if(clickedDay == null){
+      loadingDay = today;
+    }else if(clickedDay != null){
+      loadingDay = clickedDay;
+    }
+
     super.initState();
     _ref = FirebaseDatabase.instance
         .reference().child('timetables')
-        .child(FirebaseAuth.instance.currentUser.uid).child(today);
+        .child(FirebaseAuth.instance.currentUser.uid).child(loadingDay);
   }
 
   Widget _buildContactItem({Map contact}) {
@@ -171,11 +191,18 @@ class _TimetableState extends State<Timetable> {
             children: [
               GestureDetector(
                 onTap: () {
+                  String loadingDay;
+                  if(clickedDay == null){
+                    loadingDay = today;
+                  }else if(clickedDay != null){
+                    loadingDay = clickedDay;
+                  }
                   Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (_) => EditTimetable(
                                 contactKey: contact['key'],
+                                clickedDay: loadingDay,
                               )));
                 },
                 child: Row(
@@ -244,8 +271,17 @@ class _TimetableState extends State<Timetable> {
                   child: Text('Cancel')),
               FlatButton(
                   onPressed: () {
+
+                    String loadingDay;
+
+                    if(clickedDay == null){
+                      loadingDay = today;
+                    }else if(clickedDay != null){
+                      loadingDay = clickedDay;
+                    }
+
                     reference
-                        .child(today)
+                        .child(loadingDay)
                         .child(contact['key'])
                         .remove()
                         .whenComplete(() => Navigator.pop(context));
@@ -258,12 +294,40 @@ class _TimetableState extends State<Timetable> {
 
   @override
   Widget build(BuildContext context) {
+
+    String loadingDay;
+
+    if(clickedDay == null){
+      loadingDay = today;
+    }else if(clickedDay != null){
+      loadingDay = clickedDay;
+    }
+
+
     return SafeArea(
       child: Scaffold(
       appBar: AppBar(
-        title: Text(getDay(context) + " Timetable"),
+        title: Text(loadingDay + " Timetable"),
         actions: <Widget> [
-          PopupMenuButton(itemBuilder: (BuildContext context){
+          PopupMenuButton(
+              onSelected: (String str){
+                setState(() {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) =>Timetable(clickedDay : str),
+                  ));
+                 
+                });
+              },
+              itemBuilder: (BuildContext context){
+            return <PopupMenuEntry<String>>[
+              PopupMenuItem(child: Text("Monday"), value: "Monday",),
+              PopupMenuItem(child: Text("Tuesday"), value: "Tuesday",),
+              PopupMenuItem(child: Text("Wednesday"), value: "Wednesday",),
+              PopupMenuItem(child: Text("Thursday"), value: "Thursday",),
+              PopupMenuItem(child: Text("Friday"), value: "Friday",),
+              PopupMenuItem(child: Text("Saturday"), value: "Saturday",),
+              PopupMenuItem(child: Text("Sunday"), value: "Sunday",),
+            ];
           })
         ],
       ),

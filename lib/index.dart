@@ -110,8 +110,13 @@ class _MyIndexPage extends State<IndexPage>{
           backgroundColor: logoGreen,
           child: Icon(Icons.grid_view),
             onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (_) => Timetable()));
+              // Navigator.push(context,
+              //     MaterialPageRoute(builder: (_) => Timetable("zz")));
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) =>Timetable(clickedDay : null),
+              ));
+
+
             },
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,

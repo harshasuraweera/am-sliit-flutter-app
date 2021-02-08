@@ -3,25 +3,34 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
 class EditTimetable extends StatefulWidget {
-  String contactKey;
 
-  EditTimetable({this.contactKey});
+  String contactKey, clickedDay;
+  EditTimetable({Key key, this.contactKey, this.clickedDay}): super (key: key);
+
 
   @override
-  _EditTimetableState createState() => _EditTimetableState();
+  _EditTimetableState createState() => _EditTimetableState(clickedDay);
 }
 
 class _EditTimetableState extends State<EditTimetable> {
-  TextEditingController _titleController, _urlController;
+
+  String clickedDay;
+  _EditTimetableState(this.clickedDay);
+
+
+  TextEditingController _moduleController, _venueController, _typeController, _startingTimeController, _endingTimeController;
 
 
   DatabaseReference _ref;
   @override
   void initState() {
     super.initState();
-    _titleController = TextEditingController();
-    _urlController = TextEditingController();
-    _ref = FirebaseDatabase.instance.reference().child('bookmarks').child(FirebaseAuth.instance.currentUser.uid);
+    _moduleController = TextEditingController();
+    _venueController = TextEditingController();
+    _typeController = TextEditingController();
+    _startingTimeController = TextEditingController();
+    _endingTimeController = TextEditingController();
+    _ref = FirebaseDatabase.instance.reference().child('timetables').child(FirebaseAuth.instance.currentUser.uid).child(clickedDay);
     getContactDetail();
   }
 
@@ -49,7 +58,7 @@ class _EditTimetableState extends State<EditTimetable> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Update Bookmark'),
+        title: Text('Update Timetable Slot'),
       ),
       body: Container(
         margin: EdgeInsets.all(15),
@@ -57,9 +66,9 @@ class _EditTimetableState extends State<EditTimetable> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             TextFormField(
-              controller: _titleController,
+              controller: _moduleController,
               decoration: InputDecoration(
-                hintText: 'Title',
+                hintText: 'Module Name',
                 prefixIcon: Icon(
                   Icons.title,
                   size: 30,
@@ -71,9 +80,51 @@ class _EditTimetableState extends State<EditTimetable> {
             ),
             SizedBox(height: 15),
             TextFormField(
-              controller: _urlController,
+              controller: _venueController,
               decoration: InputDecoration(
-                hintText: 'URL',
+                hintText: 'Venue',
+                prefixIcon: Icon(
+                  Icons.link,
+                  size: 30,
+                ),
+                fillColor: Colors.white,
+                filled: true,
+                contentPadding: EdgeInsets.all(15),
+              ),
+            ),
+            SizedBox(height: 15),
+            TextFormField(
+              controller: _typeController,
+              decoration: InputDecoration(
+                hintText: 'Type',
+                prefixIcon: Icon(
+                  Icons.link,
+                  size: 30,
+                ),
+                fillColor: Colors.white,
+                filled: true,
+                contentPadding: EdgeInsets.all(15),
+              ),
+            ),
+            SizedBox(height: 15),
+            TextFormField(
+              controller: _startingTimeController,
+              decoration: InputDecoration(
+                hintText: 'Starting Time',
+                prefixIcon: Icon(
+                  Icons.link,
+                  size: 30,
+                ),
+                fillColor: Colors.white,
+                filled: true,
+                contentPadding: EdgeInsets.all(15),
+              ),
+            ),
+            SizedBox(height: 15),
+            TextFormField(
+              controller: _endingTimeController,
+              decoration: InputDecoration(
+                hintText: 'Ending Time',
                 prefixIcon: Icon(
                   Icons.link,
                   size: 30,
@@ -118,19 +169,29 @@ class _EditTimetableState extends State<EditTimetable> {
 
     Map contact = snapshot.value;
 
-    _titleController.text = contact['bookmarkTitle'];
-
-    _urlController.text = contact['bookmarkUrl'];
+    _moduleController.text = contact['moduleName'];
+    _venueController.text = contact['venue'];
+    _typeController.text = contact['type'];
+    _startingTimeController.text = contact['startingTime'];
+    _endingTimeController.text = contact['endingTime'];
 
   }
 
   void saveContact() {
-    String title = _titleController.text.trim();
-    String url = _urlController.text.trim();
+    String moduleName = _moduleController.text.trim();
+    String venue = _venueController.text.trim();
+
+    String startingTime = _startingTimeController.text.trim();
+    String endingTime = _endingTimeController.text.trim();
+    String type = _typeController.text.trim();
+
 
     Map<String, String> contact = {
-      'bookmarkTitle': title,
-      'bookmarkUrl':  url,
+      'moduleName': moduleName,
+      'venue':  venue,
+      'startingTime':  startingTime,
+      'endingTime':  endingTime,
+      'type':  type,
     };
 
     _ref.child(widget.contactKey).update(contact).then((value) {
