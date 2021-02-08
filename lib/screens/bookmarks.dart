@@ -5,15 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:am_sliit/index.dart';
-import 'add_contacts.dart';
-import 'edit_contact.dart';
+import 'add_bookmarks.dart';
+import 'edit_bookmarks.dart';
 
-class Contacts extends StatefulWidget {
+class Bookmark extends StatefulWidget {
   @override
-  _ContactsState createState() => _ContactsState();
+  _BookmarkState createState() => _BookmarkState();
 }
 
-class _ContactsState extends State<Contacts> {
+class _BookmarkState extends State<Bookmark> {
   Query _ref;
   DatabaseReference reference =
       FirebaseDatabase.instance.reference().child('bookmarks').child(FirebaseAuth.instance.currentUser.uid);
@@ -72,7 +72,7 @@ class _ContactsState extends State<Contacts> {
                 width: 6,
               ),
               Text(
-                contact['bookMarkUrl'],
+                contact['bookmarkUrl'],
                 style: TextStyle(
                     fontSize: 16,
                     color: Theme.of(context).accentColor,
@@ -95,7 +95,7 @@ class _ContactsState extends State<Contacts> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (_) => EditContact(
+                          builder: (_) => EditBookmark(
                                 contactKey: contact['key'],
                               )));
                 },
@@ -154,14 +154,6 @@ class _ContactsState extends State<Contacts> {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) =>IndexPage(url : clickedLink),
                   ));
-
-
-
-
-
-
-
-
                 },
                 child: Row(
                   children: [
@@ -240,7 +232,7 @@ class _ContactsState extends State<Contacts> {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (_) {
-              return AddContacts();
+              return AddBookmark();
             }),
           );
         },

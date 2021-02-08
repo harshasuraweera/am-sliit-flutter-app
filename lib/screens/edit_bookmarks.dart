@@ -1,27 +1,27 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
-class EditContact extends StatefulWidget {
+class EditBookmark extends StatefulWidget {
   String contactKey;
 
-  EditContact({this.contactKey});
+  EditBookmark({this.contactKey});
 
   @override
-  _EditContactState createState() => _EditContactState();
+  _EditBookmarkState createState() => _EditBookmarkState();
 }
 
-class _EditContactState extends State<EditContact> {
-  TextEditingController _nameController, _numberController;
-  String _typeSelected = '';
+class _EditBookmarkState extends State<EditBookmark> {
+  TextEditingController _titleController, _urlController;
+
 
   DatabaseReference _ref;
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    _nameController = TextEditingController();
-    _numberController = TextEditingController();
-    _ref = FirebaseDatabase.instance.reference().child('Contacts');
+    _titleController = TextEditingController();
+    _urlController = TextEditingController();
+    _ref = FirebaseDatabase.instance.reference().child('bookmarks').child(FirebaseAuth.instance.currentUser.uid);
     getContactDetail();
   }
 
@@ -30,12 +30,6 @@ class _EditContactState extends State<EditContact> {
       child: Container(
         height: 40,
         width: 90,
-        decoration: BoxDecoration(
-          color: _typeSelected == title
-              ? Colors.green
-              : Theme.of(context).accentColor,
-          borderRadius: BorderRadius.circular(15),
-        ),
         child: Center(
           child: Text(
             title,
@@ -45,7 +39,7 @@ class _EditContactState extends State<EditContact> {
       ),
       onTap: () {
         setState(() {
-          _typeSelected = title;
+
         });
       },
     );
@@ -55,7 +49,7 @@ class _EditContactState extends State<EditContact> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Update Contact'),
+        title: Text('Update Bookmark'),
       ),
       body: Container(
         margin: EdgeInsets.all(15),
@@ -63,11 +57,11 @@ class _EditContactState extends State<EditContact> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             TextFormField(
-              controller: _nameController,
+              controller: _titleController,
               decoration: InputDecoration(
-                hintText: 'Enter Name',
+                hintText: 'Title',
                 prefixIcon: Icon(
-                  Icons.account_circle,
+                  Icons.title,
                   size: 30,
                 ),
                 fillColor: Colors.white,
@@ -77,11 +71,11 @@ class _EditContactState extends State<EditContact> {
             ),
             SizedBox(height: 15),
             TextFormField(
-              controller: _numberController,
+              controller: _urlController,
               decoration: InputDecoration(
-                hintText: 'Enter Number',
+                hintText: 'URL',
                 prefixIcon: Icon(
-                  Icons.phone_iphone,
+                  Icons.link,
                   size: 30,
                 ),
                 fillColor: Colors.white,
@@ -91,21 +85,6 @@ class _EditContactState extends State<EditContact> {
             ),
             SizedBox(
               height: 15,
-            ),
-            Container(
-              height: 40,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: [
-                  _buildContactType('Work'),
-                  SizedBox(width: 10),
-                  _buildContactType('Family'),
-                  SizedBox(width: 10),
-                  _buildContactType('Friends'),
-                  SizedBox(width: 10),
-                  _buildContactType('Others'),
-                ],
-              ),
             ),
             SizedBox(
               height: 25,
@@ -139,23 +118,19 @@ class _EditContactState extends State<EditContact> {
 
     Map contact = snapshot.value;
 
-    _nameController.text = contact['name'];
+    _titleController.text = contact['bookmarkTitle'];
 
-    _numberController.text = contact['number'];
+    _urlController.text = contact['bookMarkUrl'];
 
-    setState(() {
-      _typeSelected = contact['type'];
-    });
   }
 
   void saveContact() {
-    String name = _nameController.text;
-    String number = _numberController.text;
+    String title = _titleController.text.trim();
+    String url = _urlController.text.trim();
 
     Map<String, String> contact = {
-      'name': name,
-      'number':  number,
-      'type': _typeSelected,
+      'bookmarkTitle': title,
+      'bookMarkUrl':  url,
     };
 
     _ref.child(widget.contactKey).update(contact).then((value) {

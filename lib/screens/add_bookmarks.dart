@@ -1,12 +1,12 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
-class AddContacts extends StatefulWidget {
+class AddBookmark extends StatefulWidget {
   @override
-  _AddContactsState createState() => _AddContactsState();
+  _AddBookmarkState createState() => _AddBookmarkState();
 }
 
-class _AddContactsState extends State<AddContacts> {
+class _AddBookmarkState extends State<AddBookmark> {
   TextEditingController _nameController, _numberController;
   String _typeSelected ='';
 

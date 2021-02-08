@@ -3,7 +3,7 @@ import 'dart:ffi';
 import 'dart:io';
 import 'dart:math';
 import 'package:am_sliit/login.dart';
-import 'package:am_sliit/screens/contacts.dart';
+import 'package:am_sliit/screens/bookmarks.dart';
 import 'package:am_sliit/welcome.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -30,6 +30,8 @@ class _MyIndexPage extends State<IndexPage>{
 
   String url;
   _MyIndexPage(this.url);
+
+
 
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -73,6 +75,9 @@ class _MyIndexPage extends State<IndexPage>{
 
   @override
   Widget build(BuildContext context) {
+    if(url == null){
+      url = "http://courseweb.sliit.lk/my/";
+    }
     return SafeArea(
       child: Scaffold(
         backgroundColor: Color(0xff00007b),
@@ -87,7 +92,7 @@ class _MyIndexPage extends State<IndexPage>{
 
 
                 Navigator.push(context,
-                    MaterialPageRoute(builder: (_) => Contacts()));
+                    MaterialPageRoute(builder: (_) => Bookmark()));
 
 
 
@@ -100,7 +105,8 @@ class _MyIndexPage extends State<IndexPage>{
           ),
         ),
         floatingActionButton:
-        FloatingActionButton(child: Icon(Icons.grid_view), onPressed: () {}),
+        FloatingActionButton(child: Icon(Icons.grid_view), onPressed: () {}
+        ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         appBar: AppBar(
           backgroundColor: logoGreen,
@@ -205,14 +211,14 @@ class _MyIndexPage extends State<IndexPage>{
               ),
 
               ListTile(
-                title: Text('BookMark Page'),
+                title: Text('Bookmark Page'),
                 onTap: () {
                   // Update the state of the app
                   // ..
                   //loadLoggedUsersBookmarks(context);
 
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (_) => Contacts()));
+                      MaterialPageRoute(builder: (_) => Bookmark()));
                   // Then close the drawer
                   Navigator.pop(context);
                 },
@@ -223,6 +229,7 @@ class _MyIndexPage extends State<IndexPage>{
           ),
         ),
        body: WebView(
+
          initialUrl: url,
          javascriptMode: JavascriptMode.unrestricted,
          onWebViewCreated: (WebViewController webViewController) {
@@ -234,14 +241,14 @@ class _MyIndexPage extends State<IndexPage>{
   }
 
 
-  void makeThisPageAsBookMark(BuildContext context, String bookmarkTitle, String bookMarkUrl) {
+  void makeThisPageAsBookMark(BuildContext context, String bookmarkTitle, String bookmarkUrl) {
 
     final User user = FirebaseAuth.instance.currentUser;
     final uid = user.uid;
 
     Map bookmarkDetails = {
       "bookmarkTitle": bookmarkTitle,
-      "bookMarkUrl": bookMarkUrl,
+      "bookmarkUrl": bookmarkUrl,
     };
 
     DatabaseReference bookmarkRef = FirebaseDatabase.instance.reference().child("bookmarks");
@@ -264,7 +271,7 @@ class _MyIndexPage extends State<IndexPage>{
 
             Map bookmarkDetails = {
               "bookmarkTitle": values["bookmarkTitle"],
-              "bookMarkUrl": values["bookMarkUrl"],
+              "bookmarkUrl": values["bookmarkUrl"],
             };
 
             print(bookmarkDetails);
