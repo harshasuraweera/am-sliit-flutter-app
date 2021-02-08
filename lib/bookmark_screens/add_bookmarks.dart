@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
@@ -7,7 +8,7 @@ class AddBookmark extends StatefulWidget {
 }
 
 class _AddBookmarkState extends State<AddBookmark> {
-  TextEditingController _nameController, _numberController;
+  TextEditingController _newTitleController, _newUrlController;
   String _typeSelected ='';
 
 DatabaseReference _ref;
@@ -15,9 +16,9 @@ DatabaseReference _ref;
   void initState() {
     // TODO: implement initState
     super.initState();
-    _nameController = TextEditingController();
-    _numberController = TextEditingController();
-    _ref = FirebaseDatabase.instance.reference().child('Contacts');
+    _newTitleController = TextEditingController();
+    _newUrlController = TextEditingController();
+    _ref = FirebaseDatabase.instance.reference().child('bookmarks').child(FirebaseAuth.instance.currentUser.uid);
   }
 
 
@@ -50,7 +51,7 @@ Widget _buildContactType(String title){
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Save Contact'),
+        title: Text('Add Custom Bookmark'),
       ),
       body: Container(
         margin: EdgeInsets.all(15),
@@ -58,11 +59,11 @@ Widget _buildContactType(String title){
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             TextFormField(
-              controller: _nameController,
+              controller: _newTitleController,
               decoration: InputDecoration(
-                hintText: 'Enter Name',
+                hintText: 'Enter Title',
                 prefixIcon: Icon(
-                  Icons.account_circle,
+                  Icons.title,
                   size: 30,
                 ),
                 fillColor: Colors.white,
@@ -72,11 +73,11 @@ Widget _buildContactType(String title){
             ),
             SizedBox(height: 15),
             TextFormField(
-              controller: _numberController,
+              controller: _newUrlController,
               decoration: InputDecoration(
-                hintText: 'Enter Number',
+                hintText: 'Enter Url',
                 prefixIcon: Icon(
-                  Icons.phone_iphone,
+                  Icons.link,
                   size: 30,
                 ),
                 fillColor: Colors.white,
@@ -85,28 +86,11 @@ Widget _buildContactType(String title){
               ),
             ),
            SizedBox(height: 15,),
-           Container(
-             height: 40,
-             child: ListView(
-
-               scrollDirection: Axis.horizontal,
-               children: [
-                 _buildContactType('Work'),
-                 SizedBox(width: 10),
-                 
-                 _buildContactType('Family'),
-                 SizedBox(width: 10),
-                 _buildContactType('Friends'),
-                 SizedBox(width: 10),
-                 _buildContactType('Others'),
-               ],
-             ),
-           ),
            SizedBox(height: 25,),
            Container(
              width: double.infinity,
              padding: EdgeInsets.symmetric(horizontal: 10),
-             child: RaisedButton(child: Text('Save Contact',style: TextStyle(
+             child: RaisedButton(child: Text('Add Now',style: TextStyle(
                fontSize: 20,
                color: Colors.white,
                fontWeight: FontWeight.w600,
@@ -127,13 +111,12 @@ Widget _buildContactType(String title){
   }
   void saveContact(){
 
-    String name = _nameController.text;
-    String number = _numberController.text;
+    String title = _newTitleController.text;
+    String url = _newUrlController.text;
 
     Map<String,String> contact = {
-      'name':name,
-      'number': '+91 ' + number,
-      'type': _typeSelected,
+      'bookmarkTitle':title,
+      'bookmarkUrl': url,
     };
 
     _ref.push().set(contact).then((value) {

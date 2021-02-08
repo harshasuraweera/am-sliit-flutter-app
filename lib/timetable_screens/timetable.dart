@@ -1,39 +1,47 @@
+import 'dart:math';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intl/intl.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:am_sliit/index.dart';
-import 'add_bookmarks.dart';
-import 'edit_bookmarks.dart';
+import 'add_timetable.dart';
+import 'edit_timetable.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
-class Bookmark extends StatefulWidget {
+class Timetable extends StatefulWidget {
   @override
-  _BookmarkState createState() => _BookmarkState();
+  _TimetableState createState() => _TimetableState();
 }
 
-class _BookmarkState extends State<Bookmark> {
+class _TimetableState extends State<Timetable> {
+
+
+  String today = DateFormat('EEEE').format(DateTime.now());
+
   Query _ref;
   DatabaseReference reference =
-      FirebaseDatabase.instance.reference().child('bookmarks').child(FirebaseAuth.instance.currentUser.uid);
+      FirebaseDatabase.instance.reference().child('timetables').child(FirebaseAuth.instance.currentUser.uid);
   
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     _ref = FirebaseDatabase.instance
-        .reference().child('bookmarks')
-        .child(FirebaseAuth.instance.currentUser.uid)
-        .orderByChild('bookmarkTitle');
+        .reference().child('timetables')
+        .child(FirebaseAuth.instance.currentUser.uid).child(today);
   }
 
   Widget _buildContactItem({Map contact}) {
 
+
+
     return Container(
       margin: EdgeInsets.symmetric(vertical: 10),
       padding: EdgeInsets.all(10),
-      height: 130,
       color: Colors.white,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -42,15 +50,15 @@ class _BookmarkState extends State<Bookmark> {
           Row(
             children: [
               Icon(
-                Icons.title,
+                Icons.menu_book,
                 color: Theme.of(context).primaryColor,
                 size: 20,
               ),
               SizedBox(
                 width: 6,
               ),
-              Text(
-                contact['bookmarkTitle'],
+              Text( "Module Name : " +
+                contact['moduleName'],
                 style: TextStyle(
                     fontSize: 16,
                     color: Theme.of(context).primaryColor,
@@ -64,26 +72,92 @@ class _BookmarkState extends State<Bookmark> {
           Row(
             children: [
               Icon(
-                Icons.link,
+                Icons.place,
                 color: Theme.of(context).accentColor,
                 size: 20,
               ),
               SizedBox(
                 width: 6,
               ),
-              Text(
-                contact['bookmarkUrl'],
+              Text("Venue : "+
+                contact['venue'],
                 style: TextStyle(
                     fontSize: 16,
                     color: Theme.of(context).accentColor,
                     fontWeight: FontWeight.w600),
               ),
               SizedBox(width: 15),
+
+            ],
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Row(
+            children: [
+              Icon(
+                Icons.wb_sunny_sharp,
+                color: Theme.of(context).primaryColor,
+                size: 20,
+              ),
               SizedBox(
                 width: 6,
               ),
+              Text( "Type : " +
+                  contact['type'],
+                style: TextStyle(
+                    fontSize: 16,
+                    color: Theme.of(context).primaryColor,
+                    fontWeight: FontWeight.w600),
+              ),
             ],
           ),
+          SizedBox(
+            height: 10,
+          ),
+          Row(
+            children: [
+              Icon(
+                Icons.play_circle_filled_sharp,
+                color: Theme.of(context).primaryColor,
+                size: 20,
+              ),
+              SizedBox(
+                width: 6,
+              ),
+              Text( "Starting At : " +
+                  contact['startingTime'],
+                style: TextStyle(
+                    fontSize: 16,
+                    color: Theme.of(context).primaryColor,
+                    fontWeight: FontWeight.w600),
+              ),
+            ],
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Row(
+            children: [
+              Icon(
+                Icons.stop_circle_outlined,
+                color: Theme.of(context).primaryColor,
+                size: 20,
+              ),
+              SizedBox(
+                width: 6,
+              ),
+              Text( "Ending At : " +
+                  contact['endingTime'],
+                style: TextStyle(
+                    fontSize: 16,
+                    color: Theme.of(context).primaryColor,
+                    fontWeight: FontWeight.w600),
+              ),
+            ],
+          ),
+
+
           SizedBox(
             height: 15,
           ),
@@ -95,7 +169,7 @@ class _BookmarkState extends State<Bookmark> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (_) => EditBookmark(
+                          builder: (_) => EditTimetable(
                                 contactKey: contact['key'],
                               )));
                 },
@@ -143,38 +217,6 @@ class _BookmarkState extends State<Bookmark> {
               SizedBox(
                 width: 20,
               ),
-              GestureDetector(
-                onTap: () {
-                  //_controller.loadUrl(contact['bookMarkUrl']);
-                 // displayToastMessage(contact['bookMarkUrl'], context);
-                  //displayToastMessage(_controller.currentUrl().toString(), context);
-
-                  var clickedLink = contact['bookMarkUrl'];
-                  print(clickedLink);
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) =>IndexPage(url : clickedLink),
-                  ));
-                },
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.arrow_forward_ios,
-                      color: Colors.green,
-                    ),
-                    SizedBox(
-                      width: 6,
-                    ),
-                    Text('Go',
-                        style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.green,
-                            fontWeight: FontWeight.w600)),
-                  ],
-                ),
-              ),
-              SizedBox(
-                width: 20,
-              ),
             ],
           )
         ],
@@ -187,7 +229,7 @@ class _BookmarkState extends State<Bookmark> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: Text('Delete ${contact['bookmarkTitle']}'),
+            title: Text('Delete ${contact['moduleName']}'),
             content: Text('Are you sure you want to delete?'),
             actions: [
               FlatButton(
@@ -213,7 +255,7 @@ class _BookmarkState extends State<Bookmark> {
     return SafeArea(
       child: Scaffold(
       appBar: AppBar(
-        title: Text('My Bookmarks'),
+        title: Text(getDay(context) + " Timetable"),
       ),
       body: Container(
         height: double.infinity,
@@ -232,7 +274,8 @@ class _BookmarkState extends State<Bookmark> {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (_) {
-              return AddBookmark();
+              return AddTimetable();
+
             }),
           );
         },
@@ -246,5 +289,23 @@ class _BookmarkState extends State<Bookmark> {
   displayToastMessage(String message, BuildContext context){
     Fluttertoast.showToast(msg: message);
   }
+
+  String getDay(BuildContext context){
+    var date = DateTime.now();
+    return DateFormat('EEEE').format(date);
+  }
+
+  String _randomString(int length) {
+    var rand = new Random();
+    var codeUnits = new List.generate(
+        length,
+            (index){
+          return rand.nextInt(33)+89;
+        }
+    );
+
+    return new String.fromCharCodes(codeUnits);
+  }
+
 
 }

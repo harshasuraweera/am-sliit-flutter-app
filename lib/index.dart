@@ -3,7 +3,8 @@ import 'dart:ffi';
 import 'dart:io';
 import 'dart:math';
 import 'package:am_sliit/login.dart';
-import 'package:am_sliit/screens/bookmarks.dart';
+import 'package:am_sliit/bookmark_screens/bookmarks.dart';
+import 'package:am_sliit/timetable_screens/timetable.dart';
 import 'package:am_sliit/welcome.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -76,36 +77,42 @@ class _MyIndexPage extends State<IndexPage>{
   @override
   Widget build(BuildContext context) {
     if(url == null){
-      url = "http://courseweb.sliit.lk/my/";
+      url = "https://courseweb.sliit.lk/my/";
+    }else{
+      if(url.startsWith("https://")){
+        url=url;
+      }else if(url.startsWith("http://")){
+        url=url;
+      }else if(!url.startsWith("https://")){
+        url = "http://" + url;
+      }else if(!url.startsWith("http://")){
+        url = "http://" + url;
+      }
     }
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Color(0xff00007b),
         bottomNavigationBar: BottomAppBar(
+          color: logoGreen,
           child: Row(
             children: [
-              IconButton(icon: Icon(Icons.arrow_back_ios), onPressed: () {
+              IconButton(icon: Icon(Icons.arrow_back_ios, color: Colors.white,), onPressed: () {
                 _controller.goBack();
               }),
               Spacer(),
-              IconButton(icon: Icon(Icons.bus_alert), onPressed: () {
-
-
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (_) => Bookmark()));
-
-
-
-
-
-              }),IconButton(icon: Icon(Icons.arrow_forward_ios), onPressed: () {
+            IconButton(icon: Icon(Icons.arrow_forward_ios, color: Colors.white,), onPressed: () {
                 _controller.goForward();
               }),
             ],
           ),
         ),
         floatingActionButton:
-        FloatingActionButton(child: Icon(Icons.grid_view), onPressed: () {}
+        FloatingActionButton(
+          backgroundColor: logoGreen,
+          child: Icon(Icons.grid_view),
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (_) => Timetable()));
+            },
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         appBar: AppBar(
@@ -116,6 +123,13 @@ class _MyIndexPage extends State<IndexPage>{
               icon: Icon(Icons.push_pin_rounded),
               onPressed: () async {
                 createAddBookmarkAlertDialog(context, await _controller.currentUrl());
+              } , // => function();
+            ),
+            IconButton(
+              icon: Icon(Icons.collections_bookmark_sharp),
+              onPressed: () async {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (_) => Bookmark()));
               } , // => function();
             ),
           ],
@@ -143,7 +157,7 @@ class _MyIndexPage extends State<IndexPage>{
                 onTap: () {
                   // Update the state of the app
                   // ...
-                  _controller.loadUrl('http://courseweb.sliit.lk/');
+                  _controller.loadUrl('https://courseweb.sliit.lk/');
                   // Then close the drawer
                   Navigator.pop(context);
                 },

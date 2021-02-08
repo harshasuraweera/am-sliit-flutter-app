@@ -49,6 +49,7 @@ dependencies:
 
   webview_flutter: ^1.0.7
   swipedetector: 1.2.0
+  intl: ^0.16.0
 
 
 dev_dependencies:

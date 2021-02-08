@@ -120,7 +120,7 @@ class _EditBookmarkState extends State<EditBookmark> {
 
     _titleController.text = contact['bookmarkTitle'];
 
-    _urlController.text = contact['bookMarkUrl'];
+    _urlController.text = contact['bookmarkUrl'];
 
   }
 
@@ -130,7 +130,7 @@ class _EditBookmarkState extends State<EditBookmark> {
 
     Map<String, String> contact = {
       'bookmarkTitle': title,
-      'bookMarkUrl':  url,
+      'bookmarkUrl':  url,
     };
 
     _ref.child(widget.contactKey).update(contact).then((value) {
