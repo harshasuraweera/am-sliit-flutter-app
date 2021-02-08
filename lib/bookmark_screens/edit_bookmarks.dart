@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class EditBookmark extends StatefulWidget {
   String contactKey;
@@ -56,6 +57,14 @@ class _EditBookmarkState extends State<EditBookmark> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            SizedBox(height: 15),
+            Center(
+              child: Image.asset(
+                'assets/edit_pic1.png',
+                height: 200,
+              ),
+            ),
+            SizedBox(height: 35),
             TextFormField(
               controller: _titleController,
               decoration: InputDecoration(
@@ -128,13 +137,24 @@ class _EditBookmarkState extends State<EditBookmark> {
     String title = _titleController.text.trim();
     String url = _urlController.text.trim();
 
-    Map<String, String> contact = {
-      'bookmarkTitle': title,
-      'bookmarkUrl':  url,
-    };
+    if(_titleController.text.isEmpty || _urlController.text.isEmpty){
+      displayToastMessage("All the fields are mandatory", context);
+    }else{
+      Map<String, String> contact = {
+        'bookmarkTitle': title,
+        'bookmarkUrl':  url,
+      };
 
-    _ref.child(widget.contactKey).update(contact).then((value) {
-      Navigator.pop(context);
-    });
+      _ref.child(widget.contactKey).update(contact).then((value) {
+        Navigator.pop(context);
+      });
+    }
+
+
   }
+
+  displayToastMessage(String message, BuildContext context){
+    Fluttertoast.showToast(msg: message);
+  }
+
 }

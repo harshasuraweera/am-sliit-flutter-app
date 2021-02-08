@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class AddBookmark extends StatefulWidget {
   @override
@@ -58,6 +59,13 @@ Widget _buildContactType(String title){
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            SizedBox(height: 35),
+            Center(
+              child: Image.asset(
+                'assets/bookmark_1.png',
+                height: 200,
+              ),
+            ),SizedBox(height: 55),
             TextFormField(
               controller: _newTitleController,
               decoration: InputDecoration(
@@ -114,15 +122,26 @@ Widget _buildContactType(String title){
     String title = _newTitleController.text;
     String url = _newUrlController.text;
 
-    Map<String,String> contact = {
-      'bookmarkTitle':title,
-      'bookmarkUrl': url,
-    };
+    if(_newUrlController.text.isEmpty || _newTitleController.text.isEmpty){
+      displayToastMessage("All the fields are mandatory", context);
+    }else{
+      Map<String,String> contact = {
+        'bookmarkTitle':title,
+        'bookmarkUrl': url,
+      };
 
-    _ref.push().set(contact).then((value) {
-      Navigator.pop(context);
-    });
+      _ref.push().set(contact).then((value) {
+        Navigator.pop(context);
+      });
+    }
+
+
 
 
   }
+
+  displayToastMessage(String message, BuildContext context){
+    Fluttertoast.showToast(msg: message);
+  }
+
 }

@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 
 class AddTimetable extends StatefulWidget {
@@ -43,7 +44,6 @@ class _AddTimetableState extends State<AddTimetable> {
       print(_timeOfDay_EndTime);
     });
   }
-
 
 
 DatabaseReference _ref;
@@ -221,24 +221,28 @@ Widget _buildContactType(String title){
 
     String moduleName = _moduleNameController.text.trim();
     String venue = _venueController.text.trim();
-
     String typeChoose = type;
     String dayChoose = day;
-    String choosedStartingTime = startingTime;
-    String choosedEndingTime = endingTine;
+    String chooseStartingTime = startingTime;
+    String chooseEndingTime = endingTine;
 
-    Map<String,String> contact = {
-      'moduleName':moduleName,
-      'venue':  venue,
-      'type': typeChoose,
-      'day': dayChoose,
-      'startingTime': choosedStartingTime,
-      'endingTime': choosedEndingTime,
-    };
+    if(_moduleNameController.text.isEmpty || _venueController.text.isEmpty || typeChoose.isEmpty || dayChoose.isEmpty || chooseStartingTime.isEmpty || chooseEndingTime.isEmpty){
+      displayToastMessage("All the fields are mandatory", context);
 
-    _ref.child(day).push().set(contact).then((value) {
-      Navigator.pop(context);
-    });
+    }else{
+      Map<String,String> contact = {
+        'moduleName':moduleName,
+        'venue':  venue,
+        'type': typeChoose,
+        'day': dayChoose,
+        'startingTime': chooseStartingTime,
+        'endingTime': chooseEndingTime,
+      };
+
+      _ref.child(day).push().set(contact).then((value) {
+        Navigator.pop(context);
+      });
+    }
 
 
   }
@@ -248,6 +252,10 @@ Widget _buildContactType(String title){
     final dt = DateTime(now.year, now.month, now.day, tod.hour, tod.minute);
     final format = DateFormat.jm();  //"6:00 AM"
     return format.format(dt);
+  }
+
+  displayToastMessage(String message, BuildContext context){
+    Fluttertoast.showToast(msg: message);
   }
 
 

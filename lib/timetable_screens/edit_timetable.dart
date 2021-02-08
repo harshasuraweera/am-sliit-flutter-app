@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class EditTimetable extends StatefulWidget {
 
@@ -65,12 +66,13 @@ class _EditTimetableState extends State<EditTimetable> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            SizedBox(height: 45),
             TextFormField(
               controller: _moduleController,
               decoration: InputDecoration(
                 hintText: 'Module Name',
                 prefixIcon: Icon(
-                  Icons.title,
+                  Icons.menu_book,
                   size: 30,
                 ),
                 fillColor: Colors.white,
@@ -84,7 +86,7 @@ class _EditTimetableState extends State<EditTimetable> {
               decoration: InputDecoration(
                 hintText: 'Venue',
                 prefixIcon: Icon(
-                  Icons.link,
+                  Icons.place,
                   size: 30,
                 ),
                 fillColor: Colors.white,
@@ -98,7 +100,7 @@ class _EditTimetableState extends State<EditTimetable> {
               decoration: InputDecoration(
                 hintText: 'Type',
                 prefixIcon: Icon(
-                  Icons.link,
+                  Icons.wb_sunny_sharp,
                   size: 30,
                 ),
                 fillColor: Colors.white,
@@ -112,7 +114,7 @@ class _EditTimetableState extends State<EditTimetable> {
               decoration: InputDecoration(
                 hintText: 'Starting Time',
                 prefixIcon: Icon(
-                  Icons.link,
+                  Icons.play_circle_filled_sharp,
                   size: 30,
                 ),
                 fillColor: Colors.white,
@@ -126,7 +128,7 @@ class _EditTimetableState extends State<EditTimetable> {
               decoration: InputDecoration(
                 hintText: 'Ending Time',
                 prefixIcon: Icon(
-                  Icons.link,
+                  Icons.stop_circle_outlined,
                   size: 30,
                 ),
                 fillColor: Colors.white,
@@ -138,7 +140,7 @@ class _EditTimetableState extends State<EditTimetable> {
               height: 15,
             ),
             SizedBox(
-              height: 25,
+              height: 35,
             ),
             Container(
               width: double.infinity,
@@ -178,24 +180,37 @@ class _EditTimetableState extends State<EditTimetable> {
   }
 
   void saveContact() {
+
     String moduleName = _moduleController.text.trim();
     String venue = _venueController.text.trim();
-
     String startingTime = _startingTimeController.text.trim();
     String endingTime = _endingTimeController.text.trim();
     String type = _typeController.text.trim();
 
+    if(_moduleController.text.isEmpty || _venueController.text.isEmpty || _startingTimeController.text.isEmpty || _endingTimeController.text.isEmpty || _typeController.text.isEmpty){
+      displayToastMessage("All the fields are mandatory", context);
 
-    Map<String, String> contact = {
-      'moduleName': moduleName,
-      'venue':  venue,
-      'startingTime':  startingTime,
-      'endingTime':  endingTime,
-      'type':  type,
-    };
+    }else if(_startingTimeController.text.endsWith("AM") || _startingTimeController.text.endsWith("PM") || _endingTimeController.text.endsWith("AM") || _endingTimeController.text.endsWith("PM")){
+      displayToastMessage("Please consider about AM & PM", context);
+    }else{
+      Map<String, String> contact = {
+        'moduleName': moduleName,
+        'venue':  venue,
+        'startingTime':  startingTime,
+        'endingTime':  endingTime,
+        'type':  type,
+      };
 
-    _ref.child(widget.contactKey).update(contact).then((value) {
-      Navigator.pop(context);
-    });
+      _ref.child(widget.contactKey).update(contact).then((value) {
+        Navigator.pop(context);
+      });
+    }
+
+
   }
+
+  displayToastMessage(String message, BuildContext context){
+    Fluttertoast.showToast(msg: message);
+  }
+
 }

@@ -17,6 +17,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:swipedetector/swipedetector.dart';
 
+import 'main.dart';
+
 class IndexPage extends StatefulWidget{
 
   String url;
@@ -122,7 +124,7 @@ class _MyIndexPage extends State<IndexPage>{
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         appBar: AppBar(
           backgroundColor: logoGreen,
-          title:  Text("CourseWeb"),
+          title:  Text("AM SLIIT"),
           actions: [
             IconButton(
               icon: Icon(Icons.push_pin_rounded),
@@ -207,6 +209,46 @@ class _MyIndexPage extends State<IndexPage>{
                   Navigator.pop(context);
                 },
               ),
+              ListTile(
+                title: Text('sliit.lk'),
+                onTap: () {
+                  // Update the state of the app
+                  // ..
+                  _controller.loadUrl('https://sliit.lk/l');
+                  // Then close the drawer
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                title: Text('Student Profile'),
+                onTap: () {
+                  // Update the state of the app
+                  // ..
+                  _controller.loadUrl('http://student.sliit.lk/profile/');
+                  // Then close the drawer
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                title: Text('Email/Domain Password Reset'),
+                onTap: () {
+                  // Update the state of the app
+                  // ..
+                  _controller.loadUrl('http://study.sliit.lk:600/');
+                  // Then close the drawer
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                title: Text('Sign Out'),
+                onTap: () {
+                  // Update the state of the app
+                  // ..
+                  signOutNow(context);
+                  // Then close the drawer
+                  Navigator.pop(context);
+                },
+              ),
             ],
           ),
         ),
@@ -217,7 +259,7 @@ class _MyIndexPage extends State<IndexPage>{
             padding: EdgeInsets.zero,
             children: <Widget>[
               DrawerHeader(
-                child: Text("Hi, Good " +greeting() + "!",
+                child: Text("Help to make things better!",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
@@ -230,19 +272,41 @@ class _MyIndexPage extends State<IndexPage>{
               ),
 
               ListTile(
-                title: Text('Bookmark Page'),
+                title: Text('Send Suggestions'),
                 onTap: () {
                   // Update the state of the app
                   // ..
-                  //loadLoggedUsersBookmarks(context);
-
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (_) => Bookmark()));
-                  // Then close the drawer
+                  _controller.loadUrl('https://docs.google.com/forms/d/e/1FAIpQLSejG3xMPJ7HAATcBq0wIx9_bxpmePUlozpd7JCUflMwhHVmmw/viewform?usp=sf_link');
                   Navigator.pop(context);
                 },
               ),
-              //add bmark list here
+              ListTile(
+                title: Text('Bugs On Android'),
+                onTap: () {
+                  // Update the state of the app
+                  // ..
+                  _controller.loadUrl('https://docs.google.com/forms/d/e/1FAIpQLSe4irKNph5Duj5m2vgOlFaVW51sD70FMYY8KrpvO2hU-OiJ_g/viewform?usp=sf_link');
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                title: Text('Bugs On Apple (IOS)'),
+                onTap: () {
+                  // Update the state of the app
+                  // ..
+                  _controller.loadUrl('https://docs.google.com/forms/d/e/1FAIpQLSeFlMZNzfRWawZ8jn1ofpvRvpUhmqsHmV3l_D2PEqqd4M_V9Q/viewform?usp=sf_link');
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                title: Text('Comment Anonymously'),
+                onTap: () {
+                  // Update the state of the app
+                  // ..
+                  _controller.loadUrl('https://docs.google.com/forms/d/e/1FAIpQLSf_lvaC1MOXtQrqxe8V51Hy9MvdB1k_wjnhtcVOhGB6D45rww/viewform?usp=sf_link');
+                  Navigator.pop(context);
+                },
+              ),
 
             ],
           ),
@@ -333,6 +397,13 @@ String _randomString(int length) {
 
   return new String.fromCharCodes(codeUnits);
 }
+
+Future<void> signOutNow (BuildContext context) async {
+  await FirebaseAuth.instance.signOut();
+  Navigator.push(context,
+      MaterialPageRoute(builder: (_) => LoadWelcomePage()));
+}
+
 
 displayToastMessage(String message, BuildContext context){
   Fluttertoast.showToast(msg: message);
