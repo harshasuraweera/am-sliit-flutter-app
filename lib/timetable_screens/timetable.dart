@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:am_sliit/bookmark_screens/bookmarks.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
@@ -21,11 +22,15 @@ class _TimetableState extends State<Timetable> {
 
 
   String today = DateFormat('EEEE').format(DateTime.now());
-
   Query _ref;
   DatabaseReference reference =
       FirebaseDatabase.instance.reference().child('timetables').child(FirebaseAuth.instance.currentUser.uid);
-  
+
+  String dayChoose;
+  List daysListItem = [
+    "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"
+  ];
+
   @override
   void initState() {
     // TODO: implement initState
@@ -125,7 +130,7 @@ class _TimetableState extends State<Timetable> {
               SizedBox(
                 width: 6,
               ),
-              Text( "Starting At : " +
+              Text( "Starting at : " +
                   contact['startingTime'],
                 style: TextStyle(
                     fontSize: 16,
@@ -147,7 +152,7 @@ class _TimetableState extends State<Timetable> {
               SizedBox(
                 width: 6,
               ),
-              Text( "Ending At : " +
+              Text( "Ending at : " +
                   contact['endingTime'],
                 style: TextStyle(
                     fontSize: 16,
@@ -240,6 +245,7 @@ class _TimetableState extends State<Timetable> {
               FlatButton(
                   onPressed: () {
                     reference
+                        .child(today)
                         .child(contact['key'])
                         .remove()
                         .whenComplete(() => Navigator.pop(context));
@@ -256,6 +262,10 @@ class _TimetableState extends State<Timetable> {
       child: Scaffold(
       appBar: AppBar(
         title: Text(getDay(context) + " Timetable"),
+        actions: <Widget> [
+          PopupMenuButton(itemBuilder: (BuildContext context){
+          })
+        ],
       ),
       body: Container(
         height: double.infinity,
@@ -305,6 +315,10 @@ class _TimetableState extends State<Timetable> {
     );
 
     return new String.fromCharCodes(codeUnits);
+  }
+
+  void choiseAction(String choice){
+    print("working");
   }
 
 
