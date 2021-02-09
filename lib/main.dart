@@ -7,6 +7,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -14,7 +15,9 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await Permission.storage.request();
-
+  await FlutterDownloader.initialize(
+      debug: true // optional: set false to disable printing logs to console
+  );
   FirebaseAuth.instance.authStateChanges().listen((User user) {
     if (user == null ) {
       //this is a new visitor
@@ -33,9 +36,6 @@ void main() async {
 
   runApp(MyWelcomePage());
 }
-
-
-
 
 DatabaseReference usersRef = FirebaseDatabase.instance.reference().child("users");
 

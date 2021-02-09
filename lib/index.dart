@@ -6,10 +6,25 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'main.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'dart:async';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Permission.storage.request();
+  await FlutterDownloader.initialize(
+      debug: true // optional: set false to disable printing logs to console
+  );
+
+  runApp(IndexPage());
+}
 
 class IndexPage extends StatefulWidget{
 
@@ -33,6 +48,9 @@ class _MyIndexPage extends State<IndexPage>{
 
   DatabaseReference bookmarkRef = FirebaseDatabase.instance.reference().child("bookmarks").child(FirebaseAuth.instance.currentUser.uid);
   TextEditingController _controllerBookmarkTitle = TextEditingController();
+
+
+  InAppWebViewController webView;
 
 
   createAddBookmarkAlertDialog (BuildContext context, String currentUrlByUser){
@@ -124,7 +142,8 @@ class _MyIndexPage extends State<IndexPage>{
             IconButton(
               icon: Icon(Icons.push_pin_rounded),
               onPressed: () async {
-                createAddBookmarkAlertDialog(context, await _controller.currentUrl());
+
+                createAddBookmarkAlertDialog(context, await webView.getUrl());
               } , // => function();
             ),
             IconButton(
@@ -169,7 +188,7 @@ class _MyIndexPage extends State<IndexPage>{
                 onTap: () {
                   // Update the state of the app
                   // ..
-                  _controller.loadUrl('https://study.sliit.lk/');
+                  webView.loadUrl(url: 'https://study.sliit.lk/');
                   // Then close the drawer
                   Navigator.pop(context);
                 },
@@ -179,7 +198,7 @@ class _MyIndexPage extends State<IndexPage>{
                 onTap: () {
                   // Update the state of the app
                   // ..
-                  _controller.loadUrl('https://lecturecapture.sliit.lk/');
+                  webView.loadUrl(url: 'https://lecturecapture.sliit.lk/');
                   // Then close the drawer
                   Navigator.pop(context);
                 },
@@ -189,7 +208,7 @@ class _MyIndexPage extends State<IndexPage>{
                 onTap: () {
                   // Update the state of the app
                   // ..
-                  _controller.loadUrl('https://onlineexams.sliit.lk/login/index.php');
+                  webView.loadUrl( url: 'https://onlineexams.sliit.lk/login/index.php');
                   // Then close the drawer
                   Navigator.pop(context);
                 },
@@ -199,7 +218,7 @@ class _MyIndexPage extends State<IndexPage>{
                 onTap: () {
                   // Update the state of the app
                   // ..
-                  _controller.loadUrl('https://netexam.sliit.lk/login/index.php');
+                  webView.loadUrl(url: 'https://netexam.sliit.lk/login/index.php');
                   // Then close the drawer
                   Navigator.pop(context);
                 },
@@ -209,7 +228,7 @@ class _MyIndexPage extends State<IndexPage>{
                 onTap: () {
                   // Update the state of the app
                   // ..
-                  _controller.loadUrl('https://sliit.lk/l');
+                  webView.loadUrl(url: 'https://sliit.lk/l');
                   // Then close the drawer
                   Navigator.pop(context);
                 },
@@ -219,7 +238,7 @@ class _MyIndexPage extends State<IndexPage>{
                 onTap: () {
                   // Update the state of the app
                   // ..
-                  _controller.loadUrl('http://student.sliit.lk/profile/');
+                  webView.loadUrl(url: 'http://student.sliit.lk/profile/');
                   // Then close the drawer
                   Navigator.pop(context);
                 },
@@ -229,7 +248,7 @@ class _MyIndexPage extends State<IndexPage>{
                 onTap: () {
                   // Update the state of the app
                   // ..
-                  _controller.loadUrl('http://study.sliit.lk:600/');
+                  webView.loadUrl(url: 'http://study.sliit.lk:600/');
                   // Then close the drawer
                   Navigator.pop(context);
                 },
@@ -271,7 +290,7 @@ class _MyIndexPage extends State<IndexPage>{
                 onTap: () {
                   // Update the state of the app
                   // ..
-                  _controller.loadUrl('https://docs.google.com/forms/d/e/1FAIpQLSejG3xMPJ7HAATcBq0wIx9_bxpmePUlozpd7JCUflMwhHVmmw/viewform?usp=sf_link');
+                  webView.loadUrl(url: 'https://docs.google.com/forms/d/e/1FAIpQLSejG3xMPJ7HAATcBq0wIx9_bxpmePUlozpd7JCUflMwhHVmmw/viewform?usp=sf_link');
                   Navigator.pop(context);
                 },
               ),
@@ -280,7 +299,7 @@ class _MyIndexPage extends State<IndexPage>{
                 onTap: () {
                   // Update the state of the app
                   // ..
-                  _controller.loadUrl('https://docs.google.com/forms/d/e/1FAIpQLSe4irKNph5Duj5m2vgOlFaVW51sD70FMYY8KrpvO2hU-OiJ_g/viewform?usp=sf_link');
+                  webView.loadUrl(url: 'https://docs.google.com/forms/d/e/1FAIpQLSe4irKNph5Duj5m2vgOlFaVW51sD70FMYY8KrpvO2hU-OiJ_g/viewform?usp=sf_link');
                   Navigator.pop(context);
                 },
               ),
@@ -289,7 +308,7 @@ class _MyIndexPage extends State<IndexPage>{
                 onTap: () {
                   // Update the state of the app
                   // ..
-                  _controller.loadUrl('https://docs.google.com/forms/d/e/1FAIpQLSeFlMZNzfRWawZ8jn1ofpvRvpUhmqsHmV3l_D2PEqqd4M_V9Q/viewform?usp=sf_link');
+                  webView.loadUrl( url: 'https://docs.google.com/forms/d/e/1FAIpQLSeFlMZNzfRWawZ8jn1ofpvRvpUhmqsHmV3l_D2PEqqd4M_V9Q/viewform?usp=sf_link');
                   Navigator.pop(context);
                 },
               ),
@@ -298,7 +317,7 @@ class _MyIndexPage extends State<IndexPage>{
                 onTap: () {
                   // Update the state of the app
                   // ..
-                  _controller.loadUrl('https://docs.google.com/forms/d/e/1FAIpQLSf_lvaC1MOXtQrqxe8V51Hy9MvdB1k_wjnhtcVOhGB6D45rww/viewform?usp=sf_link');
+                  webView.loadUrl(url:'https://docs.google.com/forms/d/e/1FAIpQLSf_lvaC1MOXtQrqxe8V51Hy9MvdB1k_wjnhtcVOhGB6D45rww/viewform?usp=sf_link');
                   Navigator.pop(context);
                 },
               ),
@@ -315,13 +334,51 @@ class _MyIndexPage extends State<IndexPage>{
           ),
         ),
        body:
-       WebView(
-         initialUrl: url,
-         javascriptMode: JavascriptMode.unrestricted,
-         onWebViewCreated: (WebViewController webViewController) {
-           _controller = webViewController;
-         },
-       ),
+       // WebView(
+       //   initialUrl: url,
+       //   javascriptMode: JavascriptMode.unrestricted,
+       //   onWebViewCreated: (WebViewController webViewController) {
+       //     _controller = webViewController;
+       //   },
+       // ),
+       Container(
+           child: Column(children: <Widget>[
+             Expanded(
+                 child: InAppWebView(
+                   initialUrl: url,
+                   initialHeaders: {},
+                   initialOptions: InAppWebViewGroupOptions(
+                     crossPlatform: InAppWebViewOptions(
+                         debuggingEnabled: true,
+                         useOnDownloadStart: true
+                     ),
+                   ),
+                   onWebViewCreated: (InAppWebViewController controller) {
+                     webView = controller;
+                   },
+                   onLoadStart: (InAppWebViewController controller, String url) {
+                     setState(() {
+                       this.url = url;
+                     });
+                   },
+                   onLoadStop: (InAppWebViewController controller, String url) {
+                     setState(() {
+                       this.url = url;
+                     });
+                   },
+                   onDownloadStart: (controller, url) async {
+                     print("onDownloadStart $url");
+                     final taskId = await FlutterDownloader.enqueue(
+                       url: url,
+                       savedDir: "/storage/emulated/0/Download/",
+                       showNotification: true, // show download progress in status bar (for Android)
+                       openFileFromNotification: true, // click on notification to open downloaded file (for Android)
+                     );
+                   },
+                 ))
+           ])),
+
+
       ),
     );
   }
