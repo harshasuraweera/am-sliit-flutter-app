@@ -1,22 +1,14 @@
 
-import 'dart:ffi';
-import 'dart:io';
 import 'dart:math';
-import 'package:am_sliit/login.dart';
 import 'package:am_sliit/bookmark_screens/bookmarks.dart';
 import 'package:am_sliit/timetable_screens/timetable.dart';
-import 'package:am_sliit/welcome.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-import 'package:swipedetector/swipedetector.dart';
-
 import 'main.dart';
 
 class IndexPage extends StatefulWidget{
@@ -30,16 +22,14 @@ class IndexPage extends StatefulWidget{
 
 class _MyIndexPage extends State<IndexPage>{
 
-
   String url;
   _MyIndexPage(this.url);
-
-
 
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final Color logoGreen = Color(0xffD0752c);
   WebViewController _controller;
+
 
   DatabaseReference bookmarkRef = FirebaseDatabase.instance.reference().child("bookmarks").child(FirebaseAuth.instance.currentUser.uid);
   TextEditingController _controllerBookmarkTitle = TextEditingController();
@@ -71,10 +61,15 @@ class _MyIndexPage extends State<IndexPage>{
     );
   }
 
+  @override
+  void initState() {
+    super.initState();
+  }
 
-
-  GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
-
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -307,12 +302,20 @@ class _MyIndexPage extends State<IndexPage>{
                   Navigator.pop(context);
                 },
               ),
+              ListTile(
+                title: Text('Contact Developer'),
+                onTap: () {
+                  // Update the state of the app
+                  // ..
 
+                  Navigator.pop(context);
+                },
+              ),
             ],
           ),
         ),
-       body: WebView(
-
+       body:
+       WebView(
          initialUrl: url,
          javascriptMode: JavascriptMode.unrestricted,
          onWebViewCreated: (WebViewController webViewController) {
@@ -336,6 +339,8 @@ class _MyIndexPage extends State<IndexPage>{
 
     DatabaseReference bookmarkRef = FirebaseDatabase.instance.reference().child("bookmarks");
     bookmarkRef.child(uid).child(_randomString(10)).set(bookmarkDetails);
+
+  }
 
   }
 
@@ -364,14 +369,9 @@ class _MyIndexPage extends State<IndexPage>{
     });
 
 
-
-
-
   }
 
 
-
-}
 
 
 String greeting() {
