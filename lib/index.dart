@@ -290,7 +290,7 @@ class _MyIndexPage extends State<IndexPage>{
                 onTap: () {
                   // Update the state of the app
                   // ..
-                  //signOutNow(context);
+                  signOutNow(context);
                   // Then close the drawer
                   Navigator.pop(context);
                 },
