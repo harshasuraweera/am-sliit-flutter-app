@@ -59,6 +59,14 @@ dependencies:
 
   flutter_inappwebview: ^4.0.0+4
 
+  flutter_launcher_icons: ^0.8.1
+
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon/app_icon.png"
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -83,6 +91,7 @@ flutter:
      - assets/register.png
      - assets/bookmark_1.png
      - assets/edit_pic1.png
+     - assets/app_icon.png
 
   #   - images/a_dot_ham.jpeg
 
