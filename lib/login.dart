@@ -1,34 +1,15 @@
 
 
-import 'dart:ffi';
 
 import 'package:am_sliit/register.dart';
 import 'package:am_sliit/reset_password.dart';
-import 'package:am_sliit/verify_email_to_continue.dart';
-import 'package:am_sliit/welcome.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:am_sliit/main.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-import 'index.dart';
-import 'login.dart';
 
 import 'package:flutter/src/widgets/framework.dart';
 
@@ -91,10 +72,8 @@ class LoginScreen extends StatelessWidget {
                   minWidth: double.maxFinite,
                   height: 50,
                   onPressed: () {
-                    if(emailController.text.isEmpty){
-                      displayToastMessage("fill the name", context);
-                    }else if(passwordController.text.isEmpty){
-                      displayToastMessage("fill the password", context);
+                    if(emailController.text.isEmpty || passwordController.text.isEmpty){
+                      displayToastMessage("All the fields are mandatory", context);
                     }else{
                       loginUser(context);
                     }

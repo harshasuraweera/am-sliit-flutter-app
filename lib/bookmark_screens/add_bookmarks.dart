@@ -10,7 +10,6 @@ class AddBookmark extends StatefulWidget {
 
 class _AddBookmarkState extends State<AddBookmark> {
   TextEditingController _newTitleController, _newUrlController;
-  String _typeSelected ='';
 
 DatabaseReference _ref;
   @override
@@ -23,30 +22,6 @@ DatabaseReference _ref;
   }
 
 
-Widget _buildContactType(String title){
-
-  return InkWell(
-
-    child: Container(
-      height: 40,
-      width: 90,
-
-      decoration: BoxDecoration(
-        color: _typeSelected == title? Colors.green : Theme.of(context).accentColor,
-        borderRadius: BorderRadius.circular(15),
-      ),
-
-      child: Center(child: Text(title, style: TextStyle(fontSize: 18,
-      color: Colors.white),
-    ),),),
-
-    onTap: (){
-      setState(() {
-        _typeSelected = title;
-      });
-    },
-  );
-}
 
   @override
   Widget build(BuildContext context) {
@@ -98,6 +73,7 @@ Widget _buildContactType(String title){
            Container(
              width: double.infinity,
              padding: EdgeInsets.symmetric(horizontal: 10),
+             // ignore: deprecated_member_use
              child: RaisedButton(child: Text('Add Now',style: TextStyle(
                fontSize: 20,
                color: Colors.white,

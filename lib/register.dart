@@ -164,7 +164,7 @@ class RegisterScreen extends StatelessWidget {
 
       usersRef.child(firebaseUser.uid).set(userDataMap);
 
-      displayToastMessage("Account created, login now", context);
+      displayToastMessage("Account created", context);
 
       Navigator.push(context,
           MaterialPageRoute(builder: (_) => LoginScreen()));

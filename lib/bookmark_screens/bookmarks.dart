@@ -3,7 +3,6 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 import 'package:am_sliit/index.dart';
 import 'add_bookmarks.dart';
 import 'edit_bookmarks.dart';
@@ -190,11 +189,13 @@ class _BookmarkState extends State<Bookmark> {
             title: Text('Delete ${contact['bookmarkTitle']}'),
             content: Text('Are you sure you want to delete?'),
             actions: [
+              // ignore: deprecated_member_use
               FlatButton(
                   onPressed: () {
                     Navigator.pop(context);
                   },
                   child: Text('Cancel')),
+              // ignore: deprecated_member_use
               FlatButton(
                   onPressed: () {
                     reference

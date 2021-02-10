@@ -37,23 +37,26 @@ class IndexPage extends StatefulWidget{
 
 class _MyIndexPage extends State<IndexPage>{
 
-  String url;
-  _MyIndexPage(this.url);
+  String loadUrl;
+  _MyIndexPage(this.loadUrl);
+
+  String currentUrl;
+
+  //String currentUrlByUser;
 
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final Color logoGreen = Color(0xffD0752c);
-  WebViewController _controller;
 
+  final User user = FirebaseAuth.instance.currentUser;
 
   DatabaseReference bookmarkRef = FirebaseDatabase.instance.reference().child("bookmarks").child(FirebaseAuth.instance.currentUser.uid);
-  TextEditingController _controllerBookmarkTitle = TextEditingController();
-
 
   InAppWebViewController webView;
 
 
-  createAddBookmarkAlertDialog (BuildContext context, String currentUrlByUser){
+  createAddBookmarkAlertDialog (BuildContext context, String currentUrlByUserz){
+    TextEditingController _controllerBookmarkTitle = TextEditingController();
     return showDialog(context: context, builder: (context){
       return AlertDialog(
         title: Text("Add this page as a bookmark"),
@@ -67,10 +70,29 @@ class _MyIndexPage extends State<IndexPage>{
           MaterialButton(
             elevation: 5.0,
             child: Text("Add"),
-            onPressed: (){
-              String _bookMarkTitle = _controllerBookmarkTitle.text.trim().toString();
-              makeThisPageAsBookMark(context, _bookMarkTitle , currentUrlByUser);
-              Navigator.of(context).pop();
+            onPressed: () {
+
+              if(_controllerBookmarkTitle.text.isEmpty){
+                displayToastMessage("Title is required!", context);
+              }else{
+                String bookmarkTitle =  _controllerBookmarkTitle.text.toString();
+                String bookmarkUrl = currentUrlByUserz;
+
+
+                final uid = user.uid;
+
+                Map bookmarkDetails = {
+                  "bookmarkTitle": bookmarkTitle,
+                  "bookmarkUrl": bookmarkUrl,
+                };
+
+                DatabaseReference bookmarkRef = FirebaseDatabase.instance.reference().child("bookmarks");
+                bookmarkRef.child(uid).child(_randomString(20)).set(bookmarkDetails);
+                // _controllerBookmarkTitle.clear();
+                Navigator.of(context).pop();
+              }
+
+
             },
           )
         ],
@@ -91,17 +113,17 @@ class _MyIndexPage extends State<IndexPage>{
 
   @override
   Widget build(BuildContext context) {
-    if(url == null){
-      url = "https://courseweb.sliit.lk/my/";
+    if(loadUrl == null){
+      loadUrl = "https://courseweb.sliit.lk/my/";
     }else{
-      if(url.startsWith("https://")){
-        url=url;
-      }else if(url.startsWith("http://")){
-        url=url;
-      }else if(!url.startsWith("https://")){
-        url = "http://" + url;
-      }else if(!url.startsWith("http://")){
-        url = "http://" + url;
+      if(loadUrl.startsWith("https://")){
+        loadUrl=loadUrl;
+      }else if(loadUrl.startsWith("http://")){
+        loadUrl=loadUrl;
+      }else if(!loadUrl.startsWith("https://")){
+        loadUrl = "http://" + loadUrl;
+      }else if(!loadUrl.startsWith("http://")){
+        loadUrl = "http://" + loadUrl;
       }
     }
     return SafeArea(
@@ -111,11 +133,15 @@ class _MyIndexPage extends State<IndexPage>{
           child: Row(
             children: [
               IconButton(icon: Icon(Icons.arrow_back_ios, color: Colors.white,), onPressed: () {
-                _controller.goBack();
+                webView.goBack();
+              }),
+              SizedBox(width: 10,),
+              IconButton(icon: Icon(Icons.autorenew_outlined, color: Colors.white,), onPressed: () {
+                webView.reload();
               }),
               Spacer(),
             IconButton(icon: Icon(Icons.arrow_forward_ios, color: Colors.white,), onPressed: () {
-                _controller.goForward();
+              webView.goForward();
               }),
             ],
           ),
@@ -143,7 +169,13 @@ class _MyIndexPage extends State<IndexPage>{
               icon: Icon(Icons.push_pin_rounded),
               onPressed: () async {
 
-                createAddBookmarkAlertDialog(context, await webView.getUrl());
+                String currentUrlz = await webView.getUrl();
+                print(currentUrlz);
+
+                createAddBookmarkAlertDialog(context, currentUrlz);
+
+
+
               } , // => function();
             ),
             IconButton(
@@ -178,7 +210,7 @@ class _MyIndexPage extends State<IndexPage>{
                 onTap: () {
                   // Update the state of the app
                   // ...
-                  _controller.loadUrl('https://courseweb.sliit.lk/');
+                  webView.loadUrl(url :'https://courseweb.sliit.lk/');
                   // Then close the drawer
                   Navigator.pop(context);
                 },
@@ -258,7 +290,7 @@ class _MyIndexPage extends State<IndexPage>{
                 onTap: () {
                   // Update the state of the app
                   // ..
-                  signOutNow(context);
+                  //signOutNow(context);
                   // Then close the drawer
                   Navigator.pop(context);
                 },
@@ -334,18 +366,11 @@ class _MyIndexPage extends State<IndexPage>{
           ),
         ),
        body:
-       // WebView(
-       //   initialUrl: url,
-       //   javascriptMode: JavascriptMode.unrestricted,
-       //   onWebViewCreated: (WebViewController webViewController) {
-       //     _controller = webViewController;
-       //   },
-       // ),
        Container(
            child: Column(children: <Widget>[
              Expanded(
                  child: InAppWebView(
-                   initialUrl: url,
+                   initialUrl: loadUrl,
                    initialHeaders: {},
                    initialOptions: InAppWebViewGroupOptions(
                      crossPlatform: InAppWebViewOptions(
@@ -358,22 +383,30 @@ class _MyIndexPage extends State<IndexPage>{
                    },
                    onLoadStart: (InAppWebViewController controller, String url) {
                      setState(() {
-                       this.url = url;
+                       this.loadUrl = url;
                      });
                    },
                    onLoadStop: (InAppWebViewController controller, String url) {
                      setState(() {
-                       this.url = url;
+                       this.loadUrl = url;
                      });
                    },
                    onDownloadStart: (controller, url) async {
-                     print("onDownloadStart $url");
-                     final taskId = await FlutterDownloader.enqueue(
-                       url: url,
-                       savedDir: "/storage/emulated/0/Download/",
-                       showNotification: true, // show download progress in status bar (for Android)
-                       openFileFromNotification: true, // click on notification to open downloaded file (for Android)
-                     );
+                     final externalDir = await getExternalStorageDirectory();
+                     final status = await Permission.storage.request();
+                     if(status.isGranted){
+                       print("onDownloadStart $url");
+                       await FlutterDownloader.enqueue(
+                         url: url,
+                         savedDir: "/storage/emulated/0/Download/",
+                         //savedDir: externalDir.path,
+                         showNotification: true, // show download progress in status bar (for Android)
+                         openFileFromNotification: true, // click on notification to open downloaded file (for Android)
+                       );
+                     }else{
+                       print('permission denied');
+                     }
+
                    },
                  ))
            ])),
@@ -395,7 +428,7 @@ class _MyIndexPage extends State<IndexPage>{
     };
 
     DatabaseReference bookmarkRef = FirebaseDatabase.instance.reference().child("bookmarks");
-    bookmarkRef.child(uid).child(_randomString(10)).set(bookmarkDetails);
+    bookmarkRef.child(uid).child(_randomString(20)).set(bookmarkDetails);
 
   }
 
@@ -444,22 +477,25 @@ String greeting() {
 }
 
 String _randomString(int length) {
-  var rand = new Random();
-  var codeUnits = new List.generate(
-      length,
-          (index){
-        return rand.nextInt(33)+89;
-      }
-  );
+  const _chars = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
+  Random _rnd = Random();
 
-  return new String.fromCharCodes(codeUnits);
+  String getRandomString(int length) => String.fromCharCodes(Iterable.generate(
+      length, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
+
+  return getRandomString(length);
+
 }
 
 Future<void> signOutNow (BuildContext context) async {
+
   await FirebaseAuth.instance.signOut();
   Navigator.push(context,
       MaterialPageRoute(builder: (_) => LoadWelcomePage()));
+
 }
+
+
 
 
 displayToastMessage(String message, BuildContext context){

@@ -3,6 +3,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
+// ignore: must_be_immutable
 class EditBookmark extends StatefulWidget {
   String contactKey;
 
@@ -26,25 +27,6 @@ class _EditBookmarkState extends State<EditBookmark> {
     getContactDetail();
   }
 
-  Widget _buildContactType(String title) {
-    return InkWell(
-      child: Container(
-        height: 40,
-        width: 90,
-        child: Center(
-          child: Text(
-            title,
-            style: TextStyle(fontSize: 18, color: Colors.white),
-          ),
-        ),
-      ),
-      onTap: () {
-        setState(() {
-
-        });
-      },
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -101,6 +83,7 @@ class _EditBookmarkState extends State<EditBookmark> {
             Container(
               width: double.infinity,
               padding: EdgeInsets.symmetric(horizontal: 10),
+              // ignore: deprecated_member_use
               child: RaisedButton(
                 child: Text(
                   'Update Contact',

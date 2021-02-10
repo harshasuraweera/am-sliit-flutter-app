@@ -1,10 +1,7 @@
 import 'package:am_sliit/login.dart';
-import 'package:am_sliit/register.dart';
-import 'package:am_sliit/welcome.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'main.dart';
 
@@ -40,7 +37,7 @@ class _MyVerifyEmailToContinue extends State<VerifyEmailToContinue>{
             ),
             SizedBox(height: 20),
             Text(
-              'To prevent unwanted persons using this application you must verify your email address',
+              'To prevent unwanted persons using this application you should verify your email address',
               textAlign: TextAlign.center,
               style: TextStyle(color: Colors.white, fontSize: 16),
             ),
@@ -74,7 +71,7 @@ class _MyVerifyEmailToContinue extends State<VerifyEmailToContinue>{
                 EmailVerifiedByMe(context);
               },
               child: Text(
-                "I just verified and let me Sign In",
+                "I just verified,let me Sign In",
                 style: TextStyle(color: Colors.white, fontSize: 16),
               ),
             ),
@@ -83,7 +80,7 @@ class _MyVerifyEmailToContinue extends State<VerifyEmailToContinue>{
                 deleteCurrentAccountAndCreateNewOne(context);
               },
               child: Text(
-                "Let me create a New Account",
+                "Create a New Account",
                 style: TextStyle(color: Colors.white, fontSize: 16),
               ),
             ),
