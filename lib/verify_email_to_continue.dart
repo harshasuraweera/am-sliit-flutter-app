@@ -1,7 +1,9 @@
+import 'package:am_sliit/index.dart';
 import 'package:am_sliit/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import 'main.dart';
 
@@ -37,25 +39,24 @@ class _MyVerifyEmailToContinue extends State<VerifyEmailToContinue>{
             ),
             SizedBox(height: 20),
             Text(
-              'To prevent unwanted persons using this application you should verify your email address',
+              'To prevent unwanted persons using this application you should verify your email address. It can be take some time to receive the email!',
               textAlign: TextAlign.center,
               style: TextStyle(color: Colors.white, fontSize: 16),
             ),
             SizedBox(
               height: 30,
             ),
-            MaterialButton(
+            MaterialButton(///resend email
               elevation: 0,
               height: 50,
               onPressed: () {
                 resendVerificationEmail(context);
               },
               color: Color(0xffD0752c),
-
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Text('Send Verification Link',
+                  Text('Resend Verification Email',
                       style: TextStyle(color: Colors.white, fontSize: 20)),
                   SizedBox(width: 10,),
                   Icon(Icons.email)
@@ -66,9 +67,16 @@ class _MyVerifyEmailToContinue extends State<VerifyEmailToContinue>{
             SizedBox(
               height: 30,
             ),
-            TextButton(
+            TextButton( //after verified
               onPressed: () {
-                EmailVerifiedByMe(context);
+               // EmailVerifiedByMe(context);
+                User user = FirebaseAuth.instance.currentUser;
+                if(user != null && !user.emailVerified){
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (_) => IndexPage()));
+                }else{
+                  displayToastMessage("Email is not yet verified!",context);
+                }
               },
               child: Text(
                 "I just verified,let me Sign In",
@@ -107,11 +115,11 @@ void resendVerificationEmail(BuildContext context)  {
 
 }
 
-void EmailVerifiedByMe(BuildContext context){
-
-  Navigator.push(context,
-      MaterialPageRoute(builder: (_) => LoginScreen()));
-}
+// void EmailVerifiedByMe(BuildContext context){
+//
+//   Navigator.push(context,
+//       MaterialPageRoute(builder: (_) => LoginScreen()));
+// }
 
 void deleteCurrentAccountAndCreateNewOne(BuildContext context) async {
 
@@ -123,7 +131,8 @@ void deleteCurrentAccountAndCreateNewOne(BuildContext context) async {
     }
   }
 
+}
 
-
-
+void displayToastMessage(String message, BuildContext context){
+  Fluttertoast.showToast(msg: message);
 }

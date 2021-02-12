@@ -24,9 +24,9 @@ void main() async {
       //load greeting page
       runApp(LoadWelcomePage());
     }else if(user != null && !user.emailVerified){
-      //user signed In but not verified email
-      //load email verification page
+
       runApp(LoadEmailVerifyPage());
+
     }else if (user != null && user.emailVerified) {
       //user signed In and verified his email
       //load cWeb Page

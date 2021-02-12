@@ -1,6 +1,7 @@
 
 
 
+import 'package:am_sliit/index.dart';
 import 'package:am_sliit/register.dart';
 import 'package:am_sliit/reset_password.dart';
 import 'package:flutter/cupertino.dart';
@@ -115,24 +116,7 @@ class LoginScreen extends StatelessWidget {
         ));
   }
 
-  // _buildFooterLogo() {
-  //   return Row(
-  //     mainAxisAlignment: MainAxisAlignment.center,
-  //     children: <Widget>[
-  //
-  //       Text('App By ',
-  //           textAlign: TextAlign.center,
-  //           style: GoogleFonts.openSans(
-  //               color: Colors.white,
-  //               fontSize: 20,
-  //               fontWeight: FontWeight.bold)),
-  //       Image.asset(
-  //         'assets/evox_white.png',
-  //         height: 40,
-  //       ),
-  //     ],
-  //   );
-  // }
+
 
   _buildTextField(
       TextEditingController controller, IconData icon, String labelText) {
@@ -183,7 +167,9 @@ class LoginScreen extends StatelessWidget {
       } else {
         displayToastMessage("User is signed in!", context);
         Navigator.push(context,
-            MaterialPageRoute(builder: (_) => LoadWelcomePage()));
+           //verification is not working
+           // MaterialPageRoute(builder: (_) => LoadWelcomePage()));
+            MaterialPageRoute(builder: (_) => IndexPage()));
       }
     });
 

@@ -166,10 +166,11 @@ class RegisterScreen extends StatelessWidget {
 
       displayToastMessage("Account created", context);
 
-      Navigator.push(context,
-          MaterialPageRoute(builder: (_) => LoginScreen()));
+      User user = FirebaseAuth.instance.currentUser;
+      user.sendEmailVerification();
 
-      FirebaseAuth.instance.signOut();
+     Navigator.push(context, MaterialPageRoute(builder: (_) => LoadEmailVerifyPage()));
+
 
     }else{ //user not created
       displayToastMessage("user has not created", context);
