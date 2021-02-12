@@ -19,7 +19,7 @@ class _EditTimetableState extends State<EditTimetable> {
   _EditTimetableState(this.clickedDay);
 
 
-  TextEditingController _moduleController, _venueController, _typeController, _startingTimeController, _endingTimeController;
+  TextEditingController _moduleController, _venueController, _typeController, _startingTimeController, _endingTimeController, _timeSlotOrderNumberController;
 
 
   DatabaseReference _ref;
@@ -31,6 +31,7 @@ class _EditTimetableState extends State<EditTimetable> {
     _typeController = TextEditingController();
     _startingTimeController = TextEditingController();
     _endingTimeController = TextEditingController();
+    _timeSlotOrderNumberController = TextEditingController();
     _ref = FirebaseDatabase.instance.reference().child('timetables').child(FirebaseAuth.instance.currentUser.uid).child(clickedDay);
     getContactDetail();
   }
@@ -67,6 +68,20 @@ class _EditTimetableState extends State<EditTimetable> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: 45),
+            TextFormField(
+              controller: _timeSlotOrderNumberController,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                hintText: 'Slot Order',
+                prefixIcon: Icon(
+                  Icons.format_list_numbered_outlined,
+                  size: 30,
+                ),
+                fillColor: Colors.white,
+                filled: true,
+                contentPadding: EdgeInsets.all(15),
+              ),
+            ),
             TextFormField(
               controller: _moduleController,
               decoration: InputDecoration(
@@ -170,7 +185,7 @@ class _EditTimetableState extends State<EditTimetable> {
     DataSnapshot snapshot = await _ref.child(widget.contactKey).once();
 
     Map contact = snapshot.value;
-
+    _timeSlotOrderNumberController.text = contact['timeSlotOrder'];
     _moduleController.text = contact['moduleName'];
     _venueController.text = contact['venue'];
     _typeController.text = contact['type'];
@@ -186,14 +201,14 @@ class _EditTimetableState extends State<EditTimetable> {
     String startingTime = _startingTimeController.text.trim();
     String endingTime = _endingTimeController.text.trim();
     String type = _typeController.text.trim();
+    String slotOrder = _timeSlotOrderNumberController.text.trim();
 
-    if(_moduleController.text.isEmpty || _venueController.text.isEmpty || _startingTimeController.text.isEmpty || _endingTimeController.text.isEmpty || _typeController.text.isEmpty){
+    if(_timeSlotOrderNumberController.text.isEmpty || _moduleController.text.isEmpty || _venueController.text.isEmpty || _startingTimeController.text.isEmpty || _endingTimeController.text.isEmpty || _typeController.text.isEmpty){
       displayToastMessage("All the fields are mandatory", context);
 
-    }else if(_startingTimeController.text.endsWith("AM") || _startingTimeController.text.endsWith("PM") || _endingTimeController.text.endsWith("AM") || _endingTimeController.text.endsWith("PM")){
-      displayToastMessage("Please consider about AM & PM", context);
     }else{
       Map<String, String> contact = {
+        'timeSlotOrder' : slotOrder,
         'moduleName': moduleName,
         'venue':  venue,
         'startingTime':  startingTime,

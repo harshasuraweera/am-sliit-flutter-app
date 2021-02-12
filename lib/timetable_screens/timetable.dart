@@ -57,7 +57,7 @@ class _TimetableState extends State<Timetable> {
     super.initState();
     _ref = FirebaseDatabase.instance
         .reference().child('timetables')
-        .child(FirebaseAuth.instance.currentUser.uid).child(loadingDay);
+        .child(FirebaseAuth.instance.currentUser.uid).child(loadingDay).orderByChild("timeSlotOrder");
   }
 
   Widget _buildContactItem({Map contact}) {

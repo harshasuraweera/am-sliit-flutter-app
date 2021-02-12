@@ -12,7 +12,7 @@ class AddTimetable extends StatefulWidget {
 }
 
 class _AddTimetableState extends State<AddTimetable> {
-  TextEditingController _moduleNameController, _venueController;
+  TextEditingController _moduleNameController, _venueController, _timeSlotOrderNumberController;
   String _typeSelected ='';
 
   TimeOfDay _timeOfDay_startTime = TimeOfDay.now();
@@ -53,6 +53,7 @@ DatabaseReference _ref;
     super.initState();
     _moduleNameController = TextEditingController();
     _venueController = TextEditingController();
+    _timeSlotOrderNumberController = TextEditingController();
     _ref = FirebaseDatabase.instance.reference().child('timetables').child(FirebaseAuth.instance.currentUser.uid);
   }
 
@@ -105,7 +106,22 @@ Widget _buildContactType(String title){
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 35),
+            SizedBox(height: 10),
+            TextFormField(
+              controller: _timeSlotOrderNumberController,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                hintText: 'Slot Order',
+                prefixIcon: Icon(
+                  Icons.format_list_numbered_outlined,
+                  size: 30,
+                ),
+                fillColor: Colors.white,
+                filled: true,
+                contentPadding: EdgeInsets.all(15),
+              ),
+            ),
+            SizedBox(height: 15),
             DropdownButton(
               isExpanded: true,
               hint: Text("Select day"),
@@ -220,17 +236,18 @@ Widget _buildContactType(String title){
 
 
     String moduleName = _moduleNameController.text.trim();
+    String slotOrder = _timeSlotOrderNumberController.text.trim();
     String venue = _venueController.text.trim();
     String typeChoose = type;
     String dayChoose = day;
     String chooseStartingTime = startingTime;
     String chooseEndingTime = endingTine;
 
-    if(_moduleNameController.text.isEmpty || _venueController.text.isEmpty || typeChoose.isEmpty || dayChoose.isEmpty || chooseStartingTime.isEmpty || chooseEndingTime.isEmpty){
+    if( _moduleNameController.text.isEmpty || _venueController.text.isEmpty || typeChoose.isEmpty || dayChoose.isEmpty || chooseStartingTime.isEmpty || chooseEndingTime.isEmpty){
       displayToastMessage("All the fields are mandatory", context);
-
     }else{
       Map<String,String> contact = {
+        'timeSlotOrder':slotOrder,
         'moduleName':moduleName,
         'venue':  venue,
         'type': typeChoose,
